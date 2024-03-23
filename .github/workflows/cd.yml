@@ -27,6 +27,6 @@ jobs:
             php artisan migrate
             composer install
             php artisan storage:link
-            php artisan config:cache
-            php artisan route:cache
+            php artisan config:clear
+            php artisan cache:clear
 
