@@ -23,6 +23,15 @@ class RegisterController extends Controller
             'password' => Hash::make($request->password),
         ]);
 
+        // default role
+        $user->assignRole('student'); // Assign user role by default
+
+        // Assign admin role to the first user
+        if ($user->id == 1) {
+            $user->assignRole('teacher');
+            $user->assignRole('admin');
+        }
+
         return response()->json(['message' => 'Registration successful', 'user' => $user]);
     }
 }
