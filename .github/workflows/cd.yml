@@ -22,6 +22,11 @@ jobs:
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           script: |
             cd /var/www/vhosts/dimovr.com/api.dimovr.com/DimoLaravel/
+            rm -rf public/storage
             git pull origin main
             php artisan migrate
             composer install
+            php artisan storage:link
+            php artisan config:cache
+            php artisan route:cache
+
