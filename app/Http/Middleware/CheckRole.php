@@ -14,23 +14,29 @@ class CheckRole
      *
      * @param Request $request
      * @param Closure $next
-     * @param mixed ...$roles
+     * @param $role
      * @return mixed
      */
-    public function handle(Request $request, Closure $next, ...$roles): mixed
+    public function handle(Request $request, Closure $next, $role): mixed
     {
-        $user = Auth::user();
+        try {
+            $user = Auth::user();
 
-        // Vérifie si l'utilisateur a au moins l'un des rôles requis
-        foreach ($roles as $role) {
-            if ($user->hasRole($role)) {
-                return $next($request);
+            if($user) {
+                // Vérifie si l'utilisateur a le rôle requis ou s'il est administrateur
+                if ($user->hasRole($role) || $user->hasRole('admin')) {
+                    return $next($request);
+                }
+                else{
+                    return response()->json(['message' => 'Unauthorized'], 401);
+                }
             }
             else{
-                return response()->json(['message' => 'Unauthorized'], 401);
+                return response()->json(['message' => 'You are not authenticated'], 401);
             }
         }
-
-        throw UnauthorizedException::forRoles($roles);
+        catch (\Exception $e) {
+            return response()->json(['message' => 'An authentication issue occured'], 401);
+        }
     }
 }

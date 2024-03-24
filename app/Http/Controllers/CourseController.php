@@ -101,7 +101,7 @@ class CourseController extends Controller
             // Data validation
             $request->validate([
                 'teacher_id' => 'required',
-                'classroom_id' => 'required',
+                'program_id' => 'required',
             ]);
             // Check if the connected user is a teacher
             if(!auth()->user()->hasRole('admin')){
@@ -134,7 +134,7 @@ class CourseController extends Controller
             // Data validation
             $request->validate([
                 'teacher_id' => 'required',
-                'classroom_id' => 'required',
+                'program_id' => 'required',
             ]);
             $course = Course::find($id);
             if ($course &&

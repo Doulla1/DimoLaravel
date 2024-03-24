@@ -15,8 +15,8 @@ return new class extends Migration
             $table->id();
             $table->UnsignedBigInteger('teacher_id');
             $table->foreign('teacher_id')->references('id')->on('users');
-            $table->UnsignedBigInteger('classroom_id');
-            $table->foreign('classroom_id')->references('id')->on('classrooms');
+            $table->UnsignedBigInteger('program_id');
+            $table->foreign('program_id')->references('id')->on('programs');
             $table->dateTime('start_date');
             $table->dateTime('end_date');
             $table->boolean ('is_active')->default(true);

@@ -195,19 +195,46 @@ class UserController extends Controller
     /**
      * Assign a role to a user.
      *
-     * @param int $id
-     * @param int $role_id
+     * @param Request $request
      * @return JsonResponse
      */
-    public function assignRole(int $id, int $role_id): JsonResponse
+    public function assignRole(Request $request): JsonResponse
     {
         try{
-            $user = User::find($id);
-            $role = Role::find($role_id);
+            //validate data expecting two integers
+            $this->validate($request, [
+                'user_id' => 'required|integer',
+                'role_id' => 'required|integer'
+            ]);
+            $user = User::find($request->user_id);
+            $role = Role::find($request->role_id);
+            if (!$user || !$role) {
+                return response()->json(['message' => 'User or role not found'], 404);
+            }
             $user->assignRole($role->name);
             // Rajouter les rôles de l'utilisateur
             $user->load('roles');
             return response()->json(["user"=>$user]);
+        } catch (Exception $e) {
+            return response ()->json ($e->getMessage (), 500);
+        }
+    }
+
+    /**
+     * Get all users with pending status (users with unassigned roles).
+     *
+     * @return JsonResponse
+     */
+    public function getPending(): JsonResponse
+    {
+        try{
+            // Récupérer les utilisateurs ayant seulement le rôle "user"
+            $users = User::whereHas('roles', function ($query) {
+                $query->where('name', 'user');
+            })->whereDoesntHave('roles', function ($query) {
+                $query->where('name', '<>', 'user');
+            })->get();
+            return response()->json(["users"=>$users]);
         } catch (Exception $e) {
             return response ()->json ($e->getMessage (), 500);
         }

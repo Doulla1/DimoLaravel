@@ -16,6 +16,7 @@ return new class extends Migration
         Role::create(['name' => 'admin']);
         Role::create(['name' => 'teacher']);
         Role::create(['name' => 'student']);
+        Role::create(['name' => 'user']);
     }
 
     /**
@@ -27,5 +28,6 @@ return new class extends Migration
         Role::where('name', 'admin')->delete();
         Role::where('name', 'teacher')->delete();
         Role::where('name', 'student')->delete();
+        Role::where('name', 'user')->delete();
     }
 };

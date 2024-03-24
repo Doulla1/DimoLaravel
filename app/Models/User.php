@@ -51,9 +51,6 @@ class User extends Authenticatable
         return $this->hasOne(Skin::class);
     }
 
-    // Get the classrooms of this user
-    public function classrooms()
-    {
-        return $this->belongsToMany(Classroom::class);
-    }
+
+
 }

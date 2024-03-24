@@ -3,6 +3,7 @@
 use App\Http\Controllers\Auth\ForgotPasswordController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\RegisterController;
+use App\Http\Controllers\ProgramController;
 use App\Http\Controllers\CourseController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
@@ -11,6 +12,9 @@ use Illuminate\Support\Facades\Route;
 Route::post('/login', [LoginController::class, 'login']);
 Route::post('/register', [RegisterController::class, 'register']);
 Route::post('/forgot-password', [ForgotPasswordController::class, 'sendResetLinkEmail']);
+
+// Récupérer toutes les programmes
+Route::get('/programs', [ProgramController::class, 'getAll']);
 
 // Routes accessibles à tout ceux qui sont connectés
 Route::middleware('auth:sanctum')->group(function () {
@@ -27,12 +31,12 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/logout', [LoginController::class, 'logout']);
 });
 
-// Routes accessibles aux students
+// Routes accessibles aux students et admins
 Route::middleware(["auth:sanctum", "checkrole:student"])->group(function () {
 
 });
 
-// Routes accessibles aux teachers
+// Routes accessibles aux teachers et admins
 Route::middleware(["auth:sanctum", "checkrole:teacher"])->group(function () {
     // Récupérer tous les cours
     Route::get('/courses', [CourseController::class, 'getAll']);
@@ -49,12 +53,33 @@ Route::middleware(["auth:sanctum", "checkrole:teacher"])->group(function () {
     // Supprimer un cours qui appartient au teacher connecté
     Route::delete('/courses/{id}', [CourseController::class, 'delete']);
 
+    // Créer un programme
+    Route::post('/programs', [ProgramController::class, 'create']);
+
+    // Récupérer les programs où le teacher connecté est responsable
+    Route::get('/programs/teacher', [ProgramController::class, 'getByConnectedHeadTeacher']);
+
+    // Récupérer les programs du teacher connecté
+    Route::get('/programs', [ProgramController::class, 'getByConnectedTeacher']);
+
+    // Récupérer un programme par son id
+    Route::get('/programs/{id}', [ProgramController::class, 'getById']);
+
+    // Mettre à jour un programme
+    Route::put('/programs/{id}', [ProgramController::class, 'update']);
+
 });
 
 // Routes accessibles qu'aux admins
 Route::middleware(["auth:sanctum", "checkrole:admin"])->group(function () {
+
+    // Inscrire un nouveau professeur
+    Route::post('/admin/register-teacher', [RegisterController::class, 'registerTeacher']);
     // Récupérer tous les utilisateurs
     Route::get ('/admin/users',[UserController::class, 'getAll']);
+
+    // Récupérer tous les utilisateurs en attente d'être assignés à un rôle
+    Route::get('/admin/users/pending', [UserController::class, 'getPending']);
 
     // Récupérer un utilisateur par son id
     Route::get('/admin/users/{id}', [UserController::class, 'getUnique']);
@@ -72,7 +97,7 @@ Route::middleware(["auth:sanctum", "checkrole:admin"])->group(function () {
     Route::get('/admin/roles', [UserController::class, 'getRoles']);
 
     // Attribuer un rôle à un utilisateur
-    Route::post('/admin/users/{id}/roles/{role_id}', [UserController::class, 'assignRole']);
+    Route::post('/admin/assign-role', [UserController::class, 'assignRole']);
 
     // Récupérer tous les cours
     Route::get('/admin/courses', [CourseController::class, 'getAll']);
@@ -82,5 +107,13 @@ Route::middleware(["auth:sanctum", "checkrole:admin"])->group(function () {
 
     // Récupérer les cours d'un teacher
     Route::get('/admin/courses/teacher/{teacherId}', [CourseController::class, 'getByTeacherId']);
+
+
+
+    // Supprimer un programme
+    Route::delete('/admin/programs/{id}', [ProgramController::class, 'destroy']);
+
+    // Récupérer les programmes d'un teacher
+    Route::get('/admin/programs/teacher/{teacherId}', [ProgramController::class, 'getByTeacherId']);
 
 });
