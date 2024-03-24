@@ -26,6 +26,9 @@ class CheckRole
             if ($user->hasRole($role)) {
                 return $next($request);
             }
+            else{
+                return response()->json(['message' => 'Unauthorized'], 401);
+            }
         }
 
         throw UnauthorizedException::forRoles($roles);
