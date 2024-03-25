@@ -4,8 +4,11 @@ use App\Http\Controllers\Auth\ForgotPasswordController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\DocumentController;
+use App\Http\Controllers\ItemController;
+use App\Http\Controllers\ItemTypeController;
 use App\Http\Controllers\ProgramController;
 use App\Http\Controllers\CourseController;
+use App\Http\Controllers\SkinController;
 use App\Http\Controllers\SubjectController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
@@ -31,6 +34,12 @@ Route::middleware('auth:sanctum')->group(function () {
 
     // Mettre à jour le mot de passe de l'utilisateur connecté
     Route::put('/updateUserPassword', [UserController::class, 'updatePassword']);
+
+    // Récupérer les items pour le skin
+    Route::get('/items', [ItemController::class, 'getAll']);
+
+    // Créer un skin
+    Route::post('/skins', [SkinController::class, 'store']);
 
     // Se déconnecter
     Route::post('/logout', [LoginController::class, 'logout']);
@@ -146,5 +155,20 @@ Route::middleware(["auth:sanctum", "checkrole:admin"])->group(function () {
 
     // Récupérer les programmes d'un teacher
     Route::get('/admin/programs/teacher/{teacherId}', [ProgramController::class, 'getByTeacherId']);
+
+    // CRUD de ItemType
+    Route::get('/admin/item-types', [ItemTypeController::class, 'getAll']);
+    Route::post('/admin/item-types', [ItemTypeController::class, 'store']);
+    Route::get('/admin/item-types/{id}', [ItemTypeController::class, 'get']);
+    Route::put('/admin/item-types/{id}', [ItemTypeController::class, 'update']);
+    Route::delete('/admin/item-types/{id}', [ItemTypeController::class, 'delete']);
+
+    //CRUD de Item
+    Route::post('/admin/items', [ItemController::class, 'store']);
+    Route::get('/admin/items/{id}', [ItemController::class, 'get']);
+    Route::put('/admin/items/{id}', [ItemController::class, 'update']);
+
+    //Réccupérer tous les skins
+    Route::get('/admin/skins', [SkinController::class, 'getAll']);
 
 });
