@@ -17,6 +17,12 @@ class Program extends Model
         'end_date',
     ];
 
+    // Get subjects of this program
+    public function subjects()
+    {
+        return $this->hasMany(Subject::class);
+    }
+
     // Get the users with role "student" in this classroom
     public function students()
     {

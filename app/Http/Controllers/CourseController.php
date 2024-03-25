@@ -98,21 +98,28 @@ class CourseController extends Controller
     public function create(Request $request)
     {
         try {
+            // Vérification que l'utilisateur à le role teacher
+            if (!auth()->user()->hasRole('teacher')) {
+                return response()->json([
+                    "message" => "You are not a teacher"
+                ], 404);
+            }
             // Data validation
             $request->validate([
-                'teacher_id' => 'required',
-                'program_id' => 'required',
+                'subject_id' => 'integer|required',
+                'start_date' => 'required|date',
+                'end_date' => 'required|date',
             ]);
-            // Check if the connected user is a teacher
-            if(!auth()->user()->hasRole('admin')){
-                $request->validate([
-                    'teacher_id' => 'required|in:'.auth()->user()->id
-                ]);
-            }
-            $course = Course::create($request->all());
+            // Create course
+            $course = new Course;
+            $course->teacher_id = auth()->user()->id;
+            $course->subject_id = $request->subject_id;
+            $course->start_date = $request->start_date;
+            $course->end_date = $request->end_date;
+            $course->save();
 
             return response()->json([
-                "data" => $course
+                "course" => $course
             ]);
         } catch (Exception $e) {
             return response()->json([
@@ -133,15 +140,17 @@ class CourseController extends Controller
         try {
             // Data validation
             $request->validate([
-                'teacher_id' => 'required',
-                'program_id' => 'required',
+                'teacher_id' => 'integer',
+                'subject_id' => 'integer',
+                'start_date' => 'date',
+                'end_date' => 'date',
             ]);
             $course = Course::find($id);
             if ($course &&
                 ($course->teacher_id == auth()->user()->id || auth()->user()->hasRole('admin'))) {
                 $course->update($request->all());
                 return response()->json([
-                    "data" => $course
+                    "course" => $course
                 ]);
             } else {
                 return response()->json([
@@ -156,6 +165,66 @@ class CourseController extends Controller
     }
 
     /**
+     * Start à course
+     *
+     * @param int $course_id
+     * @return JsonResponse
+     */
+    public function start(int $course_id): JsonResponse
+    {
+        try {
+            $course = Course::find($course_id);
+            if ($course &&
+                ($course->teacher_id == auth()->user()->id || auth()->user()->hasRole('teacher'))) {
+                $course->start_date = now();
+                $course->is_active = true;
+                $course->save();
+                return response()->json([
+                    "course" => $course
+                ]);
+            } else {
+                return response()->json([
+                    "message" => "Course not found or you are not authorized to start it"
+                ], 404);
+            }
+        } catch (Exception $e) {
+            return response()->json([
+                "message" => "An error occurred while starting course"
+            ], 500);
+        }
+    }
+
+    /**
+     * End a course
+     *
+     * @param int $course_id
+     * @return JsonResponse
+     */
+    public function end(int $course_id): JsonResponse
+    {
+        try {
+            $course = Course::find($course_id);
+            if ($course &&
+                ($course->teacher_id == auth()->user()->id || auth()->user()->hasRole('teacher'))) {
+                $course->end_date = now();
+                $course->is_active = false;
+                $course->save();
+                return response()->json([
+                    "course" => $course
+                ]);
+            } else {
+                return response()->json([
+                    "message" => "Course not found or you are not authorized to end it"
+                ], 404);
+            }
+        } catch (Exception $e) {
+            return response()->json([
+                "message" => "An error occurred while ending course"
+            ], 500);
+        }
+    }
+
+    /**
      * Delete a course
      *
      * @param int $id
@@ -165,7 +234,7 @@ class CourseController extends Controller
     {
         try {
             $course = Course::find($id);
-            if ($course&&
+            if ($course &&
                 ($course->teacher_id == auth()->user()->id || auth()->user()->hasRole('admin'))) {
                 $course->delete();
                 return response()->json();

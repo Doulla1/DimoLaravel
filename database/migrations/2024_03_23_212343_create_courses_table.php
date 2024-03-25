@@ -15,11 +15,11 @@ return new class extends Migration
             $table->id();
             $table->UnsignedBigInteger('teacher_id');
             $table->foreign('teacher_id')->references('id')->on('users');
-            $table->UnsignedBigInteger('program_id');
-            $table->foreign('program_id')->references('id')->on('programs');
+            $table->UnsignedBigInteger('subject_id');
+            $table->foreign('subject_id')->references('id')->on('subjects');
             $table->dateTime('start_date');
             $table->dateTime('end_date');
-            $table->boolean ('is_active')->default(true);
+            $table->boolean ('is_active')->default(false);
             $table->timestamps();
         });
     }

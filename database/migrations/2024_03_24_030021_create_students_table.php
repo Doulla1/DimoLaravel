@@ -18,7 +18,12 @@ return new class extends Migration
             $table->foreign('user_id')->references('id')->on('users');
             $table->foreign('program_id')->references('id')->on('programs');
             $table->timestamps();
+
+            // Ajouter une contrainte d'unicité composite sur user_id et program_id
+            $table->unique(['user_id', 'program_id']);
         });
+
+
     }
 
     /**

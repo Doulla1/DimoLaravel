@@ -51,6 +51,16 @@ class User extends Authenticatable
         return $this->hasOne(Skin::class);
     }
 
+    // Get the classrooms teached by this user (teacher)
+    public function teachedSubjects()
+    {
+        return $this->belongsToMany(Subject::class, "teachers");
+    }
 
+    // Get the classrooms attended by this user (student)
+    public function attendedPrograms()
+    {
+        return $this->belongsToMany(Program::class,"students");
+    }
 
 }

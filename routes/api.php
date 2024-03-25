@@ -3,8 +3,10 @@
 use App\Http\Controllers\Auth\ForgotPasswordController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\RegisterController;
+use App\Http\Controllers\DocumentController;
 use App\Http\Controllers\ProgramController;
 use App\Http\Controllers\CourseController;
+use App\Http\Controllers\SubjectController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 
@@ -21,6 +23,9 @@ Route::middleware('auth:sanctum')->group(function () {
     // Récupérer les informations de l'utilisateur connecté
     Route::get('/fetchUser',[UserController::class, 'getConnectedUser']);
 
+    // Récupérer les documents d'une matière
+    Route::get('/documents/{subject_id}', [DocumentController::class, 'getDocuments']);
+
     // Mettre à jour les informations de l'utilisateur connecté
     Route::put('/updateUser', [UserController::class, 'updateConnectedUser']);
 
@@ -33,6 +38,11 @@ Route::middleware('auth:sanctum')->group(function () {
 
 // Routes accessibles aux students et admins
 Route::middleware(["auth:sanctum", "checkrole:student"])->group(function () {
+    // Récupérer les programmes auxquels le student connecté est inscrit
+    Route::get('/student-programs', [ProgramController::class, 'getByConnectedStudent']);
+
+    // S'inscrire à un programme
+    Route::post('/programs/register', [ProgramController::class, 'registerStudent']);
 
 });
 
@@ -44,8 +54,14 @@ Route::middleware(["auth:sanctum", "checkrole:teacher"])->group(function () {
     // Créer un cours
     Route::post('/courses', [CourseController::class, 'create']);
 
+    // Commencer un cours
+    Route::post('/courses/{course_id}/start', [CourseController::class, 'start']);
+
+    // Terminer un cours
+    Route::post('/courses/{course_id}/end', [CourseController::class, 'end']);
+
     // Récupérer les cours du teacher connecté
-    Route::get('/courses/teacher', [CourseController::class, 'getByConnectedTeacher']);
+    Route::get('/teached-courses', [CourseController::class, 'getByConnectedTeacher']);
 
     // Mettre à jour un cours qui appartient au teacher connecté
     Route::put('/courses/{id}', [CourseController::class, 'update']);
@@ -60,13 +76,28 @@ Route::middleware(["auth:sanctum", "checkrole:teacher"])->group(function () {
     Route::get('/programs/teacher', [ProgramController::class, 'getByConnectedHeadTeacher']);
 
     // Récupérer les programs du teacher connecté
-    Route::get('/programs', [ProgramController::class, 'getByConnectedTeacher']);
+    Route::get('/teached-programs', [ProgramController::class, 'getByConnectedTeacher']);
 
     // Récupérer un programme par son id
     Route::get('/programs/{id}', [ProgramController::class, 'getById']);
 
     // Mettre à jour un programme
     Route::put('/programs/{id}', [ProgramController::class, 'update']);
+
+    // Crérer une matière
+    Route::post('/subjects', [SubjectController::class, 'create']);
+
+    // Modifier une matière
+    Route::put('/subjects/{id}', [SubjectController::class, 'update']);
+
+    // Ajouter un document à une matière
+    Route::post('/add-documents', [DocumentController::class, 'addDocuments']);
+
+    // Rejoindre une matière en tant que teacher
+    Route::post('/join-subject', [SubjectController::class, 'joinSubject']);
+
+    // Supprimer une matière
+    Route::delete('/subjects/{id}', [SubjectController::class, 'delete']);
 
 });
 

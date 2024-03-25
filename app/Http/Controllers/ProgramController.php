@@ -2,15 +2,14 @@
 
 namespace App\Http\Controllers;
 
+use App\Mail\RegisterToProgram;
 use App\Models\program;
-use App\Models\Teacher;
 use Exception;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Validator;
-use Illuminate\Validation\ValidationException;
-use function Symfony\Component\Translation\t;
 
 class ProgramController extends Controller
 {
@@ -22,6 +21,7 @@ class ProgramController extends Controller
     public function getAll()
     {
         $programs = program::all();
+        $programs->load('subjects');
 
         return response()->json(["programs"=>$programs], 200);
     }
@@ -86,6 +86,40 @@ class ProgramController extends Controller
             ], 500);
         }
     }
+
+    /**
+     * Register connected student to a program
+     *
+     * @param Request $request
+     * @return JsonResponse
+     */
+    public function registerStudent(Request $request)
+    {
+        try {
+            $student = Auth::user();
+            // Validation des données
+            $this->validate($request,[
+                'program_id' => 'integer|required'
+            ]);
+            $program = program::find($request->program_id);
+            if ($program) {
+                $program->students()->attach($student->id);
+                // Envoyer un email de confirmation à l'étudiant
+                Mail::to ($student->email)->send (new RegisterToProgram($student,$program));
+
+                return response()->json(["program"=>$program], 200);
+            } else {
+                return response()->json([
+                    "message" => "program not found"
+                ], 404);
+            }
+        } catch (Exception $e) {
+            return response()->json([
+                "message" => "An error occurred while registering student : " . $e->getMessage()
+            ], 500);
+        }
+    }
+
 
 
 

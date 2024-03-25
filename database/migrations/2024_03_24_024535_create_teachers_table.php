@@ -18,6 +18,9 @@ return new class extends Migration
             $table->UnsignedBigInteger('subject_id');
             $table->foreign('subject_id')->references('id')->on('subjects')->onDelete('cascade');
             $table->timestamps();
+
+            // Ajouter une contrainte d'unicité composite sur user_id et program_id
+            $table->unique(['user_id', 'subject_id']);
         });
     }
 
