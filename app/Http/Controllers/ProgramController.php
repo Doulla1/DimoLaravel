@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Mail\RegisterToProgram;
 use App\Models\program;
+use App\Models\User;
 use Exception;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -84,6 +85,30 @@ class ProgramController extends Controller
                 "status" => 0,
                 "message" => "An error occurred while creating program : ".$e->getMessage()
             ], 500);
+        }
+    }
+
+    /**
+     * Get all programs of connected students.
+     *
+     * @return JsonResponse
+     */
+    public function getByConnectedStudent(): JsonResponse
+    {
+        try{
+            //Vérifier si l'utilisateur connecté est un étudiant
+            $user = Auth::user();
+            if (!$user->hasRole('student')) {
+                return response()->json(['message' => 'You are not a student'], 401);
+            }
+            $user = User::find($user->id);
+            // Récupérer les programmes auxquels l'étudiant est inscrit
+            $programs = $user->attendedPrograms();
+            // Charger les matières de chaque programme
+            $programs->load('subjects');
+            return response()->json(["programs"=>$programs]);
+        } catch (Exception $e) {
+            return response()->json($e->getMessage(), 500);
         }
     }
 

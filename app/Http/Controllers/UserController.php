@@ -50,7 +50,7 @@ class UserController extends Controller
     /**
      * Get user by email
      *
-     * @param Request $request
+     * @param string $email
      * @return JsonResponse
      */
     public function getByEmail(string $email): JsonResponse
@@ -154,7 +154,12 @@ class UserController extends Controller
         }
     }
 
-    // updatePassword
+    /**
+     * Update connected user password.
+     *
+     * @param Request $request
+     * @return JsonResponse
+     */
     public function updatePassword(Request $request): JsonResponse
     {
         try{

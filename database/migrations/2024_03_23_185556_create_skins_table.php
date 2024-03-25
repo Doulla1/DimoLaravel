@@ -15,13 +15,9 @@ return new class extends Migration
             $table->id();
             $table->UnsignedBigInteger('user_id');
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
-            $table->UnsignedBigInteger('hair_id');
-            $table->foreign('hair_id')->references('id')->on('item');
-            $table->UnsignedBigInteger('upper_id');
-            $table->foreign('upper_id')->references('id')->on('item');
-            $table->UnsignedBigInteger('lower_id');
-            $table->foreign('lower_id')->references('id')->on('item');
-            $table->string('skin-color');
+            $table->UnsignedBigInteger('skin_part_version_id');
+            $table->foreign('skin_part_version_id')->references('id')->on('skin_part_versions')->onDelete('cascade');
+            $table->string('color');
             $table->timestamps();
         });
     }

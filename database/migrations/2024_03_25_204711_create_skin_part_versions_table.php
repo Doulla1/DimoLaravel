@@ -11,11 +11,12 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('items', function (Blueprint $table) {
+        Schema::create('skin_part_versions', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('item_type_id');
-            $table->foreign('item_type_id')->references('id')->on('item_types');
-            $table->string('svg_path');
+            $table->unsignedBigInteger('skin_part_id');
+            $table->foreign('skin_part_id')->references('id')->on('skin_parts')->onDelete('cascade');
+            $table->string('name')->nullable ();
+            $table->string('image');
             $table->timestamps();
         });
     }
@@ -25,6 +26,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('items');
+        Schema::dropIfExists('skin_part_versions');
     }
 };

@@ -5,14 +5,14 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Skin extends Model
+class SkinPartVersion extends Model
 {
     use HasFactory;
 
     protected $fillable = [
-        'user_id',
-        'skin_part_version_id',
-        'color'
+        'skin_part_id',
+        'name',
+        'image',
     ];
 
 }

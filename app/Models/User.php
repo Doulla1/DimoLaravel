@@ -4,6 +4,8 @@ namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
@@ -45,20 +47,20 @@ class User extends Authenticatable
         'password' => 'hashed',
     ];
 
-    // the user got a skin
-    public function skin()
+    // Get the skin of this user
+    public function skin(): HasMany
     {
-        return $this->hasOne(Skin::class);
+        return $this->hasMany (Skin::class);
     }
 
     // Get the classrooms teached by this user (teacher)
-    public function teachedSubjects()
+    public function teachedSubjects(): BelongsToMany
     {
         return $this->belongsToMany(Subject::class, "teachers");
     }
 
     // Get the classrooms attended by this user (student)
-    public function attendedPrograms()
+    public function attendedPrograms(): BelongsToMany
     {
         return $this->belongsToMany(Program::class,"students");
     }

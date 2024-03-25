@@ -13,11 +13,11 @@ class SkinController extends Controller
      *
      * @return JsonResponse
      */
-    public function getAll()
+    public function getAll(): JsonResponse
     {
         try {
             $skins = Skin::all();
-            return response()->json($skins);
+            return response()->json(["skins" => $skins]);
         } catch (\Exception $e) {
             return response()->json(['message' => $e->getMessage()], 500);
         }
@@ -26,15 +26,18 @@ class SkinController extends Controller
     /**
      * Create a new skin
      *
+     * @param Request $request
      * @return JsonResponse
      */
-    public function store(Request $request)
+    public function store(Request $request): JsonResponse
     {
         try {
             $skin = new Skin();
-            $skin->hair = $request->name;
+            $skin->user_id = $request->user_id;
+            $skin->skin_part_version_id = $request->skin_part_version_id;
+            $skin->color = $request->color;
             $skin->save();
-            return response()->json($skin);
+            return response()->json(["skin" => $skin]);
         } catch (\Exception $e) {
             return response()->json(['message' => $e->getMessage()], 500);
         }
@@ -43,13 +46,14 @@ class SkinController extends Controller
     /**
      * Get a single skin
      *
+     * @param int $id
      * @return JsonResponse
      */
-    public function get($id)
+    public function get(int $id): JsonResponse
     {
         try {
             $skin = Skin::find($id);
-            return response()->json($skin);
+            return response()->json(["skin" => $skin]);
         } catch (\Exception $e) {
             return response()->json(['message' => $e->getMessage()], 500);
         }
@@ -62,13 +66,32 @@ class SkinController extends Controller
      * @param int $id
      * @return JsonResponse
      */
-    public function update(Request $request, $id)
+    public function update(Request $request, int $id)
     {
         try {
             $skin = Skin::find($id);
-            $skin->name = $request->name;
+            $skin->user_id = $request->user_id;
+            $skin->skin_part_version_id = $request->skin_part_version_id;
+            $skin->color = $request->color;
             $skin->save();
-            return response()->json($skin);
+            return response()->json(["skin" => $skin]);
+        } catch (\Exception $e) {
+            return response()->json(['message' => $e->getMessage()], 500);
+        }
+    }
+
+    /**
+     * Delete the specified resource in storage.
+     *
+     * @param int $id
+     * @return JsonResponse
+     */
+    public function delete(int $id): JsonResponse
+    {
+        try {
+            $skin = Skin::find($id);
+            $skin->delete();
+            return response()->json(["message" => "Le skin a bien été supprimé"]);
         } catch (\Exception $e) {
             return response()->json(['message' => $e->getMessage()], 500);
         }
