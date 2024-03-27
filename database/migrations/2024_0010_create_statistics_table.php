@@ -16,7 +16,7 @@ return new class extends Migration
             $table->UnsignedBigInteger('user_id');
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
             $table->UnsignedBigInteger('questionnaire_id');
-            $table->foreign('questionnaire_id')->references('id')->on('questionnaire');
+            $table->foreign('questionnaire_id')->references('id')->on('questionnaires');
             $table->integer('result');
             $table->integer('total_correct_answers');
             $table->timestamps();
