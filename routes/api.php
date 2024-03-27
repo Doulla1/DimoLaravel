@@ -17,6 +17,9 @@ use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 
 // Routes accéssibles à tout le monde
+Route::get ('/', function () {
+    return response()->json(['message' => 'Welcome to the API of DimoVR.'], 200);
+});
 Route::post('/login', [LoginController::class, 'login']);
 Route::post('/register', [RegisterController::class, 'register']);
 Route::post('/forgot-password', [ForgotPasswordController::class, 'sendResetLinkEmail']);

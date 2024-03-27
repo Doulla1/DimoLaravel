@@ -25,7 +25,6 @@ jobs:
             rm -rf public/storage
             git pull origin main
             composer install --optimize-autoloader --no-dev
-            php artisan migrate:rollback
             php artisan migrate
             php artisan storage:link
             php artisan config:clear
