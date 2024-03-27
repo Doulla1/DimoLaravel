@@ -72,7 +72,10 @@ return [
      * ],
      * ```
      */
-    'servers' => null,
+    'servers' => [
+          'Local' => 'api',
+          'Prod' => 'https://api.dimovr.com/api',
+      ],
 
     'middleware' => [
         'web',

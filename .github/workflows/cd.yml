@@ -29,4 +29,3 @@ jobs:
             php artisan storage:link
             php artisan config:clear
             php artisan cache:clear
-

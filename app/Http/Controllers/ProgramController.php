@@ -21,10 +21,16 @@ class ProgramController extends Controller
      */
     public function getAll()
     {
-        $programs = program::all();
-        $programs->load('subjects');
-
-        return response()->json(["programs"=>$programs], 200);
+        try {
+            $programs = program::all();
+            $programs->load('subjects');
+            return response()->json(["programs"=>$programs], 200);
+        } catch (Exception $e) {
+            return response()->json([
+                "status" => 0,
+                "message" => "An error occurred while getting programs"
+            ], 500);
+        }
     }
 
     /**

@@ -109,7 +109,7 @@ Route::middleware(["auth:sanctum", "checkrole:teacher"])->group(function () {
     Route::post('/programs', [ProgramController::class, 'create']);
 
     // Récupérer les programs où le teacher connecté est responsable
-    Route::get('/programs/teacher', [ProgramController::class, 'getByConnectedHeadTeacher']);
+    Route::get('/programs/iamheadteacher', [ProgramController::class, 'getByConnectedHeadTeacher']);
 
     // Récupérer les programs du teacher connecté
     Route::get('/teached-programs', [ProgramController::class, 'getByConnectedTeacher']);
@@ -238,14 +238,8 @@ Route::middleware(["auth:sanctum", "checkrole:admin"])->group(function () {
     // Récupérer les cours d'un teacher
     Route::get('/admin/courses/teacher/{teacherId}', [CourseController::class, 'getByTeacherId']);
 
-
-
     // Supprimer un programme
     Route::delete('/admin/programs/{id}', [ProgramController::class, 'destroy']);
-
-    // Récupérer les programmes d'un teacher
-    Route::get('/admin/programs/teacher/{teacherId}', [ProgramController::class, 'getByTeacherId']);
-
 
     // CRUD des skins
 
