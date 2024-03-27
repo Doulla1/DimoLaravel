@@ -29,9 +29,4 @@ class Program extends Model
         return $this->belongsToMany(User::class, "students");
     }
 
-    // Get the users with role "teacher" in this classroom*
-    public function teachers()
-    {
-        return $this->belongsToMany(User::class,"teachers");
-    }
 }

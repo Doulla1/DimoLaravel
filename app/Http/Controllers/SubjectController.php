@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Subject;
 use App\Models\Teacher;
+use App\Models\User;
 use Exception;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -148,11 +149,12 @@ class SubjectController extends Controller
      *
      * @return JsonResponse
      */
-    public function joinSubject(Request $request)
+    public function joinSubject(Request $request): JsonResponse
     {
         try {
             // Vérification de l'existence du professeur
             $teacher = Auth::user ();
+            $teacher = User::find($teacher->id);
             if (!$teacher || !$teacher->hasRole('teacher')) {
                 return response()->json([
                     "message" => "You are not a teacher"
@@ -176,6 +178,45 @@ class SubjectController extends Controller
             return response()->json([
                 "status" => 0,
                 "message" => "An error occurred while joining subject : ".$e->getMessage()
+            ], 500);
+        }
+    }
+
+    /**
+     * Leave a subject as a teacher
+     *
+     * @param Request $request
+     * @return JsonResponse
+     */
+    public function leaveSubject(Request $request): JsonResponse
+    {
+        try {
+            // Vérification de l'existence du professeur
+            $teacher = Auth::user ();
+            $teacher = User::find($teacher->id);
+            if (!$teacher || !$teacher->hasRole('teacher')) {
+                return response()->json([
+                    "message" => "You are not a teacher"
+                ], 404);
+            }
+
+            // Validation des données
+            $this->validate($request,[
+                'subject_id' => 'integer|required',
+            ]);
+            $subject = Subject::find($request->subject_id);
+            if (!$subject) {
+                return response()->json([
+                    "message" => "Subject not found"
+                ], 404);
+            }
+            // Supprimer le lien dans la table teachers
+            $teacher->teachedSubjects()->detach($subject->id);
+            return response()->json(["subject"=>$subject], 200);
+        } catch (Exception $e) {
+            return response()->json([
+                "status" => 0,
+                "message" => "An error occurred while leaving subject : ".$e->getMessage()
             ], 500);
         }
     }

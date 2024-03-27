@@ -5,14 +5,13 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Statistic extends Model
+class Response extends Model
 {
     use HasFactory;
 
     protected $fillable = [
         'user_id',
-        'questionnaire_id',
-        'result',
-        'total_correct_answers',
+        'question_id',
+        'option_id',
     ];
 }

@@ -18,6 +18,7 @@ return new class extends Migration
             $table->UnsignedBigInteger('questionnaire_id');
             $table->foreign('questionnaire_id')->references('id')->on('questionnaire');
             $table->integer('result');
+            $table->integer('total_correct_answers');
             $table->timestamps();
         });
     }

@@ -24,12 +24,6 @@ class Subject extends Model
         return $this->hasMany(Course::class);
     }
 
-    // Got many programs
-    public function programs()
-    {
-        return $this->belongsToMany(Program::class, "program_subject");
-    }
-
     // Got many questionnaires
     public function questionnaires()
     {

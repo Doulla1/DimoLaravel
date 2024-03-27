@@ -27,6 +27,23 @@ class QuestionController extends Controller
     }
 
     /**
+     * Get a question by id.
+     *
+     * @param int $id
+     * @return JsonResponse
+     */
+    public function getUnique(int $id): JsonResponse
+    {
+        try {
+            $question = Question::findOrFail($id);
+            $question->load('options');
+            return response()->json(['question' => $question], 200);
+        } catch (\Exception $e) {
+            return response()->json(['message' => $e->getMessage()], 404);
+        }
+    }
+
+    /**
      * Create a new question.
      *
      * @param Request $request

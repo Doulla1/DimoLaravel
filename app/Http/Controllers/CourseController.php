@@ -87,6 +87,27 @@ class CourseController extends Controller
         }
     }
 
+    /**
+     * Get all courses of current student
+     *
+     * @return JsonResponse
+     */
+    public function getByConnectedStudent()
+    {
+        try {
+            $studentId = auth()->user()->id;
+            // Trouver tous les cours qui font partie des matières des programmes auxquels l'étudiant est inscrit
+            $courses = Course::whereHas('subject.programs.students', function ($query) use ($studentId) {
+                $query->where('students.id', $studentId);
+            })->get();
+            return response()->json(["cours"=>$courses], 200);
+        } catch (Exception $e) {
+            return response()->json([
+                "message" => "An error occurred while getting courses"
+            ], 500);
+        }
+    }
+
 
 
     /**
@@ -167,12 +188,22 @@ class CourseController extends Controller
     /**
      * Start à course
      *
+     * Seulement si il y'a une salle de classe disponible (seulement 5 salles de classe disponibles)
+     *
      * @param int $course_id
      * @return JsonResponse
      */
     public function start(int $course_id): JsonResponse
     {
         try {
+            // Vérifier s'il n'y a pas déjà 5 cours actifs
+            $activeCourses = Course::where('is_active', true)->count();
+            if ($activeCourses == 5) {
+                return response()->json([
+                    "message" => "There are already 5 active courses. Wait for a course to end before starting a new one"
+                ], 400);
+            }
+
             $course = Course::find($course_id);
             if ($course &&
                 ($course->teacher_id == auth()->user()->id || auth()->user()->hasRole('teacher'))) {

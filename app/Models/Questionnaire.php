@@ -14,6 +14,7 @@ class Questionnaire extends Model
         'title',
         'description',
         'lesson_id',
+        'is_visible'
     ];
 
     // Get the questions for the questionnaire.

@@ -89,6 +89,31 @@ class ProgramController extends Controller
     }
 
     /**
+     * Get all students of a program
+     *
+     * @param int $id Program id
+     * @return JsonResponse
+     */
+    public function getStudents(int $id): JsonResponse
+    {
+        try {
+            $program = program::find($id);
+            if ($program) {
+                $students = $program->students;
+                return response()->json(["students"=>$students], 200);
+            } else {
+                return response()->json([
+                    "message" => "program not found"
+                ], 404);
+            }
+        } catch (Exception $e) {
+            return response()->json([
+                "message" => "An error occurred while getting students"
+            ], 500);
+        }
+    }
+
+    /**
      * Get all programs of connected students.
      *
      * @return JsonResponse

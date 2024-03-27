@@ -4,8 +4,11 @@ use App\Http\Controllers\Auth\ForgotPasswordController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\DocumentController;
+use App\Http\Controllers\OptionController;
 use App\Http\Controllers\ProgramController;
 use App\Http\Controllers\CourseController;
+use App\Http\Controllers\QuestionController;
+use App\Http\Controllers\QuestionnaireController;
 use App\Http\Controllers\SkinController;
 use App\Http\Controllers\SkinPartController;
 use App\Http\Controllers\SkinPartVersionController;
@@ -54,7 +57,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/logout', [LoginController::class, 'logout']);
 });
 
-// Routes accessibles aux students et admins
+// Routes accessibles aux students
 Route::middleware(["auth:sanctum", "checkrole:student"])->group(function () {
     // Récupérer les programmes auxquels le student connecté est inscrit
     Route::get('/student-programs', [ProgramController::class, 'getByConnectedStudent']);
@@ -62,9 +65,24 @@ Route::middleware(["auth:sanctum", "checkrole:student"])->group(function () {
     // S'inscrire à un programme
     Route::post('/programs/register', [ProgramController::class, 'registerStudent']);
 
+    // Récupérer les questionnaires d'un programme auquel le student est inscrit
+    Route::get('/student-questionnaires', [QuestionnaireController::class, 'getByConnectedStudent']);
+
+    // Enregistrer les réponses d'un questionnaire
+    Route::post('/questionnaires/answers', [QuestionnaireController::class, 'saveAnswers']);
+
+    // Consulter les résultats d'un questionnaire
+    Route::get('/questionnaires/{questionnaireId}/results', [QuestionnaireController::class, 'getScoreOfQuestionnaire']);
+
+    // Consulter les résultats des questionnaires passés
+    Route::get('/questionnaires/results', [QuestionnaireController::class, 'getScoreOfAllQuestionnaires']);
+
+    // Consulter son emploi du temps (liste des cours)
+    Route::get('/student-courses', [CourseController::class, 'getByConnectedStudent']);
+
 });
 
-// Routes accessibles aux teachers et admins
+// Routes accessibles aux teachers
 Route::middleware(["auth:sanctum", "checkrole:teacher"])->group(function () {
     // Récupérer tous les cours
     Route::get('/courses', [CourseController::class, 'getAll']);
@@ -102,7 +120,10 @@ Route::middleware(["auth:sanctum", "checkrole:teacher"])->group(function () {
     // Mettre à jour un programme
     Route::put('/programs/{id}', [ProgramController::class, 'update']);
 
-    // Crérer une matière
+    // Récupérer les étudiants d'un programme
+    Route::get('/programs/{id}/students', [ProgramController::class, 'getStudents']);
+
+    // Créer une matière
     Route::post('/subjects', [SubjectController::class, 'create']);
 
     // Modifier une matière
@@ -114,8 +135,68 @@ Route::middleware(["auth:sanctum", "checkrole:teacher"])->group(function () {
     // Rejoindre une matière en tant que teacher
     Route::post('/join-subject', [SubjectController::class, 'joinSubject']);
 
+    // Quitter une matière en tant que teacher
+    Route::post('/leave-subject', [SubjectController::class, 'leaveSubject']);
+
     // Supprimer une matière
     Route::delete('/subjects/{id}', [SubjectController::class, 'delete']);
+
+    // CRUD des options
+
+    // Récupérer toutes les options
+    Route::get('/options', [OptionController::class, 'getAll']);
+
+    // Récupérer une option par son id
+    Route::get('/options/{id}', [OptionController::class, 'getUnique']);
+
+    // Créer une option
+    Route::post('/options', [OptionController::class, 'create']);
+
+    // Mettre à jour une option
+    Route::put('/options/{id}', [OptionController::class, 'update']);
+
+    // Supprimer une option
+    Route::delete('/options/{id}', [OptionController::class, 'delete']);
+
+    // CRUD des questions
+
+    // Récupérer toutes les questions
+    Route::get('/questions', [QuestionController::class, 'getAll']);
+
+    // Récupérer une question par son id
+    Route::get('/questions/{id}', [QuestionController::class, 'getUnique']);
+
+    // Créer une question
+    Route::post('/questions', [QuestionController::class, 'create']);
+
+    // Mettre à jour une question
+    Route::put('/questions/{id}', [QuestionController::class, 'update']);
+
+    // Supprimer une question
+    Route::delete('/questions/{id}', [QuestionController::class, 'delete']);
+
+    // CRUD des des questionnaires
+
+    // Récupérer tous les questionnaires
+    Route::get('/questionnaires', [QuestionnaireController::class, 'getAll']);
+
+    // Récupère un questionnaire par son id
+    Route::get('/questionnaires/{id}', [QuestionnaireController::class, 'getUnique']);
+
+    // Créer un questionnaire
+    Route::post('/questionnaires', [QuestionnaireController::class, 'create']);
+
+    // Mettre à jour un questionnaire
+    Route::put('/questionnaires/{id}', [QuestionnaireController::class, 'update']);
+
+    // Make a questionnaire available to students.
+    Route::post('/questionnaires/{id}/publish', [QuestionnaireController::class, 'makeAvailable']);
+
+    // Make a questionnaire unavailable to students.
+    Route::post('/questionnaires/{id}/unpublish', [QuestionnaireController::class, 'makeUnavailable']);
+
+    // Supprimer un questionnaire
+    Route::delete('/questionnaires/{id}', [QuestionnaireController::class, 'delete']);
 
 });
 

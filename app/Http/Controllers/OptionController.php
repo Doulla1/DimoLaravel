@@ -24,6 +24,22 @@ class OptionController extends Controller
     }
 
     /**
+     * Get an option by id.
+     *
+     * @param int $id
+     * @return JsonResponse
+     */
+    public function getUnique(int $id): JsonResponse
+    {
+        try {
+            $option = Option::findOrFail($id);
+            return response()->json(['option' => $option], 200);
+        } catch (\Exception $e) {
+            return response()->json(['message' => $e->getMessage()], 404);
+        }
+    }
+
+    /**
      * Create a new option.
      *
      * @param Request $request
@@ -80,6 +96,4 @@ class OptionController extends Controller
             return response()->json(['message' => $e->getMessage()], 500);
         }
     }
-
-
 }
