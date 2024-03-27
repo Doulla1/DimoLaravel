@@ -16,7 +16,7 @@ return new class extends Migration
             $table->text('text');
             $table->integer('order')->default(0);
             $table->unsignedBigInteger('questionnaire_id');
-            $table->foreign('questionnaire_id')->references('id')->on('questionnaires')->onDelete('cascade');
+            $table->foreign('questionnaire_id')->references('id')->on('questionnaires');
             $table->timestamps();
         });
     }

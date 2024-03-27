@@ -24,8 +24,9 @@ jobs:
             cd /var/www/vhosts/dimovr.com/api.dimovr.com/DimoLaravel/
             rm -rf public/storage
             git pull origin main
+            composer install --optimize-autoloader --no-dev
+            php artisan migrate:rollback
             php artisan migrate
-            composer install
             php artisan storage:link
             php artisan config:clear
             php artisan cache:clear
