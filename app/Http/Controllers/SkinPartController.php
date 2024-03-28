@@ -13,6 +13,7 @@ class SkinPartController extends Controller
     /**
      * Get all SkinParts
      *
+     * @response array{skinParts: SkinPart[]}
      * @return JsonResponse
      */
     public function getAll()
@@ -29,6 +30,7 @@ class SkinPartController extends Controller
      * Create a new SkinPart
      *
      * @param  Request  $request
+     * @response array{skinPart: SkinPart}
      * @return JsonResponse
      */
     public function store(Request $request)
@@ -55,6 +57,7 @@ class SkinPartController extends Controller
      * Get SkinPart by ID
      *
      * @param int $id
+     * @response array{skinPart: SkinPart}
      * @return JsonResponse
      */
     public function getById(int $id): JsonResponse
@@ -72,6 +75,7 @@ class SkinPartController extends Controller
      *
      * @param  Request  $request
      * @param int $id
+     * @response array{skinPart: SkinPart}
      * @return JsonResponse
      */
     public function update(Request $request, int $id): JsonResponse

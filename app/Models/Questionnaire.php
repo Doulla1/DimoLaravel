@@ -23,4 +23,15 @@ class Questionnaire extends Model
         return $this->hasMany(Question::class);
     }
 
+    public function toArray()
+    {
+        return [
+            'id' => $this->id,
+            'title' => $this->title,
+            'description' => $this->description,
+            'lesson_id' => $this->lesson_id,
+            'is_visible' => $this->is_visible
+        ];
+    }
+
 }

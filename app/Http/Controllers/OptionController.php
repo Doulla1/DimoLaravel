@@ -11,6 +11,7 @@ class OptionController extends Controller
     /**
      * Get all options
      *
+     * @response array{options: Option[]}
      * @return JsonResponse
      */
     public function getAll(): JsonResponse
@@ -27,6 +28,7 @@ class OptionController extends Controller
      * Get an option by id.
      *
      * @param int $id
+     * @response array{option: Option}
      * @return JsonResponse
      */
     public function getUnique(int $id): JsonResponse
@@ -43,6 +45,8 @@ class OptionController extends Controller
      * Create a new option.
      *
      * @param Request $request
+     *
+     * @response array{option: Option}
      * @return JsonResponse
      */
     public function create(Request $request): JsonResponse
@@ -64,6 +68,7 @@ class OptionController extends Controller
      *
      * @param Request $request
      * @param int $id
+     * @response array{option: Option}
      * @return JsonResponse
      */
     public function update(Request $request, int $id): JsonResponse

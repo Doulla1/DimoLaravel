@@ -15,4 +15,14 @@ class Skin extends Model
         'color'
     ];
 
+    public function toArray()
+    {
+        return [
+            'id' => $this->id,
+            'user_id' => $this->user_id,
+            'skin_part_version_id' => $this->skin_part_version_id,
+            'color' => $this->color
+        ];
+    }
+
 }

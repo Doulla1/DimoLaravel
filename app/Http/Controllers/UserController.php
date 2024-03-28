@@ -15,6 +15,7 @@ class UserController extends Controller
     /**
      * Get all users.
      *
+     * @response array{users: User[]}
      * @return JsonResponse
      */
     public function getAll(): JsonResponse
@@ -33,6 +34,7 @@ class UserController extends Controller
      * Get user by ID
      *
      * @param int $id
+     * @response array{user: User}
      * @return JsonResponse
      */
     public function getUnique(int $id): JsonResponse
@@ -51,6 +53,7 @@ class UserController extends Controller
      * Get user by email
      *
      * @param string $email
+     * @response array{user: User}
      * @return JsonResponse
      */
     public function getByEmail(string $email): JsonResponse
@@ -69,6 +72,7 @@ class UserController extends Controller
      * Get connected user.
      *
      * @param Request $request
+     * @response array{user: User}
      * @return JsonResponse
      */
     public function getConnectedUser(Request $request): JsonResponse
@@ -105,6 +109,7 @@ class UserController extends Controller
      *
      * @param Request $request
      * @param int $id
+     * @response array{user: User}
      * @return JsonResponse
      */
     public function update(Request $request, int $id): JsonResponse
@@ -131,6 +136,7 @@ class UserController extends Controller
      * Update connected user.
      *
      * @param Request $request
+     * @response array{user: User}
      * @return JsonResponse
      */
     public function updateConnectedUser(Request $request): JsonResponse
@@ -158,6 +164,7 @@ class UserController extends Controller
      * Update connected user password.
      *
      * @param Request $request
+     * @response array{user: User}
      * @return JsonResponse
      */
     public function updatePassword(Request $request): JsonResponse
@@ -185,6 +192,7 @@ class UserController extends Controller
     /**
      * Get all roles.
      *
+     * @response array{roles: Role[]}
      * @return JsonResponse
      */
     public function getRoles(): JsonResponse
@@ -201,6 +209,7 @@ class UserController extends Controller
      * Assign a role to a user.
      *
      * @param Request $request
+     * @response array{user: User}
      * @return JsonResponse
      */
     public function assignRole(Request $request): JsonResponse
@@ -228,6 +237,7 @@ class UserController extends Controller
     /**
      * Get all users with pending status (users with unassigned roles).
      *
+     * @response array{users: User[]}
      * @return JsonResponse
      */
     public function getPending(): JsonResponse

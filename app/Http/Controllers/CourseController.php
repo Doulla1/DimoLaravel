@@ -12,6 +12,7 @@ class CourseController extends Controller
     /**
      * Get all courses
      *
+     * @response array{cours: Course[]}
      * @return JsonResponse
      */
     public function getAll()
@@ -31,6 +32,7 @@ class CourseController extends Controller
      * Get a course by id
      *
      * @param int $id
+     * @response array{cours: Course}
      * @return JsonResponse
      */
     public function getById(int $id)
@@ -55,6 +57,7 @@ class CourseController extends Controller
      * Get courses by teacher id
      *
      * @param int $teacherId
+     * @response array{cours: Course[]}
      * @return JsonResponse
      */
     public function getByTeacherId(int $teacherId)
@@ -72,6 +75,7 @@ class CourseController extends Controller
     /**
      * Get all courses by connected teacher
      *
+     * @response array{cours: Course[]}
      * @return JsonResponse
      */
     public function getByConnectedTeacher()
@@ -90,6 +94,7 @@ class CourseController extends Controller
     /**
      * Get all courses of current student
      *
+     * @response array{cours: Course[]}
      * @return JsonResponse
      */
     public function getByConnectedStudent()
@@ -114,6 +119,7 @@ class CourseController extends Controller
      * Create a course
      *
      * @param Request $request
+     * @response array{cours: Course}
      * @return JsonResponse
      */
     public function create(Request $request)
@@ -140,7 +146,7 @@ class CourseController extends Controller
             $course->save();
 
             return response()->json([
-                "course" => $course
+                "cours" => $course
             ]);
         } catch (Exception $e) {
             return response()->json([
@@ -154,6 +160,7 @@ class CourseController extends Controller
      *
      * @param Request $request
      * @param int $id
+     * @response array{cours: Course}
      * @return JsonResponse
      */
     public function update(Request $request, int $id)
@@ -191,6 +198,7 @@ class CourseController extends Controller
      * Seulement si il y'a une salle de classe disponible (seulement 5 salles de classe disponibles)
      *
      * @param int $course_id
+     * @response array{course: Course}
      * @return JsonResponse
      */
     public function start(int $course_id): JsonResponse
@@ -229,6 +237,7 @@ class CourseController extends Controller
      * End a course
      *
      * @param int $course_id
+     * @response array{course: Course}
      * @return JsonResponse
      */
     public function end(int $course_id): JsonResponse

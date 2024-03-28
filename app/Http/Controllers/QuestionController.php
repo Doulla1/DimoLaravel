@@ -13,6 +13,7 @@ class QuestionController extends Controller
     /**
      * Get all questions
      *
+     * @response array{questions: Question[]}
      * @return JsonResponse
      */
     public function getAll(): JsonResponse
@@ -30,6 +31,7 @@ class QuestionController extends Controller
      * Get a question by id.
      *
      * @param int $id
+     * @response array{question: Question}
      * @return JsonResponse
      */
     public function getUnique(int $id): JsonResponse
@@ -47,6 +49,7 @@ class QuestionController extends Controller
      * Create a new question.
      *
      * @param Request $request
+     * @response array{question: Question}
      * @return JsonResponse
      */
     public function create(Request $request): JsonResponse
@@ -68,6 +71,7 @@ class QuestionController extends Controller
      *
      * @param Request $request
      * @param int $id
+     * @response array{question: Question}
      * @return JsonResponse
      */
     public function update(Request $request, int $id): JsonResponse

@@ -18,4 +18,12 @@ class SkinPart extends Model
     {
         return $this->hasMany(SkinPartVersion::class);
     }
+
+    public function toArray()
+    {
+        return [
+            'id' => $this->id,
+            'name' => $this->name,
+        ];
+    }
 }

@@ -16,6 +16,8 @@ class RegisterController extends Controller
     /**
      * Register a new student
      *
+     * @unauthenticated
+     *
      * @param Request $request
      * @return JsonResponse
      */
@@ -76,12 +78,12 @@ class RegisterController extends Controller
                 'password' => 'required|min:8',
             ]);
 
-            $user = User::create ([
-                'firstname' => $request->firstname,
-                'lastname' => $request->lastname,
-                'email' => $request->email,
-                'password' => Hash::make ($request->password),
-            ]);
+            $user = new User;
+            $user->firstname = $request->firstname;
+            $user->lastname = $request->lastname;
+            $user->email = $request->email;
+            $user->password = Hash::make ($request->password);
+            $user->save ();
 
 
             // Assign student role to the user

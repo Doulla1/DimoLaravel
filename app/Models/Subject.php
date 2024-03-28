@@ -35,4 +35,15 @@ class Subject extends Model
     {
         return $this->belongsToMany(User::class, "teachers");
     }
+
+    public function toArray()
+    {
+        return [
+            'id' => $this->id,
+            'title' => $this->title,
+            'description' => $this->description,
+            'illustration' => $this->illustration,
+            'program_id' => $this->program_id
+        ];
+    }
 }

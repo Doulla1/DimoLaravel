@@ -11,6 +11,7 @@ class SkinController extends Controller
     /**
      * Get all skins
      *
+     * @response array{skins: Skin[]}
      * @return JsonResponse
      */
     public function getAll(): JsonResponse
@@ -27,6 +28,7 @@ class SkinController extends Controller
      * Create a new skin
      *
      * @param Request $request
+     * @response array{skin: Skin}
      * @return JsonResponse
      */
     public function store(Request $request): JsonResponse
@@ -47,6 +49,7 @@ class SkinController extends Controller
      * Get a single skin
      *
      * @param int $id
+     * @response array{skin: Skin}
      * @return JsonResponse
      */
     public function get(int $id): JsonResponse
@@ -64,6 +67,7 @@ class SkinController extends Controller
      *
      * @param Request $request
      * @param int $id
+     * @response array{skin: Skin}
      * @return JsonResponse
      */
     public function update(Request $request, int $id)

@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Models\Subject;
-use App\Models\Teacher;
 use App\Models\User;
 use Exception;
 use Illuminate\Http\JsonResponse;
@@ -17,9 +16,10 @@ class SubjectController extends Controller
      * Create a new subject
      *
      * @param Request $request
+     * @response array{subject: Subject}
      * @return JsonResponse
      */
-    public function create(Request $request)
+    public function create(Request $request): JsonResponse
     {
         try {
             // Vérification de l'existence du professeur
@@ -79,9 +79,12 @@ class SubjectController extends Controller
     /**
      * Update a subject
      *
+     * @param Request $request
+     * @param $id
+     * @response array{subject: Subject}
      * @return JsonResponse
      */
-    public function update(Request $request, $id)
+    public function update(Request $request, $id): JsonResponse
     {
         try {
             // Vérification de l'existence du professeur
@@ -147,6 +150,8 @@ class SubjectController extends Controller
     /**
      * Join a subject as a teacher
      *
+     * @param Request $request
+     * @response array{subject: Subject}
      * @return JsonResponse
      */
     public function joinSubject(Request $request): JsonResponse
@@ -186,6 +191,7 @@ class SubjectController extends Controller
      * Leave a subject as a teacher
      *
      * @param Request $request
+     * @response array{subject: Subject}
      * @return JsonResponse
      */
     public function leaveSubject(Request $request): JsonResponse
@@ -224,9 +230,10 @@ class SubjectController extends Controller
     /**
      * Delete a subject
      *
+     * @param $id
      * @return JsonResponse
      */
-    public function delete($id)
+    public function delete($id): JsonResponse
     {
         try {
             $subject = Subject::find($id);

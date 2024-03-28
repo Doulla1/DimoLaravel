@@ -14,4 +14,14 @@ class Option extends Model
         'question_id',
         'is_correct',
     ];
+
+    public function toArray()
+    {
+        return [
+            'id' => $this->id,
+            'text' => $this->text,
+            'question_id' => $this->question_id,
+            'is_correct' => $this->is_correct,
+        ];
+    }
 }

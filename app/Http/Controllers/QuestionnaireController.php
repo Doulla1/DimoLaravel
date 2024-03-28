@@ -15,6 +15,7 @@ class QuestionnaireController extends Controller
     /**
      * Get all questionnaires
      *
+     * @response array{questionnaires: Questionnaire[]}
      * @return JsonResponse
      */
     public function getAll(): JsonResponse
@@ -32,6 +33,7 @@ class QuestionnaireController extends Controller
      * Get a questionnaire by id.
      *
      * @param int $id
+     * @response array{questionnaire: Questionnaire}
      * @return JsonResponse
      */
     public function getUnique(int $id): JsonResponse
@@ -49,6 +51,7 @@ class QuestionnaireController extends Controller
      * Get all questionnaires for a subject from a program where the current user is a student
      *
      * @param int $subjectId
+     * @response array{questionnaires: Questionnaire[]}
      * @return JsonResponse
      */
     public function getByConnectedStudent(int $subjectId): JsonResponse
@@ -74,6 +77,7 @@ class QuestionnaireController extends Controller
      * Create a new questionnaire.
      *
      * @param Request $request
+     * @response array{questionnaire: Questionnaire}
      * @return JsonResponse
      */
     public function create(Request $request): JsonResponse
@@ -101,6 +105,7 @@ class QuestionnaireController extends Controller
      *
      * @param Request $request
      * @param int $id
+     * @response array{questionnaire: Questionnaire}
      * @return JsonResponse
      */
     public function update(Request $request, int $id): JsonResponse
@@ -129,6 +134,7 @@ class QuestionnaireController extends Controller
      * Chaque bonne réponse vaut 1 point.
      *
      * @param Request $request
+     * @response array{score: int}
      * @return JsonResponse
      */
     public function saveAnswers(Request $request): JsonResponse
@@ -186,6 +192,7 @@ class QuestionnaireController extends Controller
      * Make a questionnaire available to students.
      *
      * @param int $questionnaireId
+     * @response array{message: string}
      * @return JsonResponse
      */
     public function makeAvailable(int $questionnaireId): JsonResponse
@@ -204,6 +211,7 @@ class QuestionnaireController extends Controller
      * Make a questionnaire unavailable to students.
      *
      * @param int $questionnaireId
+     * @response array{message: string}
      * @return JsonResponse
      */
     public function makeUnavailable(int $questionnaireId): JsonResponse
@@ -222,6 +230,7 @@ class QuestionnaireController extends Controller
      * Get the score of a student for a questionnaire.
      *
      * @param int $questionnaireId
+     * @response array{score: int}
      * @return JsonResponse
      */
     public function getScoreOfQuestionnaire(int $questionnaireId): JsonResponse
@@ -244,7 +253,7 @@ class QuestionnaireController extends Controller
     /**
      * Get the score of a student for all questionnaires.
      *
-     *
+     * @response array{scores: array}
      * @return JsonResponse
      */
     public function getScoreOfAllQuestionnaires(): JsonResponse

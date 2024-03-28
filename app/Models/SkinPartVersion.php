@@ -15,4 +15,14 @@ class SkinPartVersion extends Model
         'image',
     ];
 
+    public function toArray()
+    {
+        return [
+            'id' => $this->id,
+            'skin_part_id' => $this->skin_part_id,
+            'name' => $this->name,
+            'image' => $this->image,
+        ];
+    }
+
 }

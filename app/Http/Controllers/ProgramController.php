@@ -17,6 +17,7 @@ class ProgramController extends Controller
     /**
      * Get all programs
      *
+     * @response array{programs: program[]}
      * @return JsonResponse
      */
     public function getAll()
@@ -37,6 +38,7 @@ class ProgramController extends Controller
      * Create a new program
      *
      * @param Request $request
+     * @response array{program: program}
      * @return JsonResponse
      */
     public function create(Request $request)
@@ -98,6 +100,7 @@ class ProgramController extends Controller
      * Get all students of a program
      *
      * @param int $id Program id
+     * @response array{students: User[]}
      * @return JsonResponse
      */
     public function getStudents(int $id): JsonResponse
@@ -122,6 +125,7 @@ class ProgramController extends Controller
     /**
      * Get all programs of connected students.
      *
+     * @response array{programs: program[]}
      * @return JsonResponse
      */
     public function getByConnectedStudent(): JsonResponse
@@ -147,6 +151,7 @@ class ProgramController extends Controller
      * Register connected student to a program
      *
      * @param Request $request
+     * @response array{program: program}
      * @return JsonResponse
      */
     public function registerStudent(Request $request)
@@ -182,6 +187,7 @@ class ProgramController extends Controller
     /**
      * Get all programs where the head-teacher is the connected user
      *
+     * @response array{programs: program[]}
      * @return JsonResponse
      */
     public function getByConnectedHeadTeacher()
@@ -200,6 +206,7 @@ class ProgramController extends Controller
     /**
      * Get all programs teached by connected teacher
      *
+     * @response array{programs: program[]}
      * @return JsonResponse
      */
     public function getByConnectedTeacher()
@@ -218,9 +225,11 @@ class ProgramController extends Controller
     /**
      * Display the specified resource.
      *
+     * @param int $id
+     * @response array{program: program}
      * @return JsonResponse
      */
-    public function getById(int $id)
+    public function getById(int $id): JsonResponse
     {
         try {
             $program = program::find($id);
@@ -244,6 +253,7 @@ class ProgramController extends Controller
      *
      * @param Request $request
      * @param int $id
+     * @response array{program: program}
      * @return JsonResponse
      */
     public function update(Request $request, int $id): JsonResponse

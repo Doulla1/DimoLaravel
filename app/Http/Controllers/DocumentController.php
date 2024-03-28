@@ -17,6 +17,7 @@ class DocumentController extends Controller
      * Add a document to a subject
      *
      * @param Request $request
+     * @response array{documents: Document[]}
      * @return JsonResponse
      * @throws ValidationException
      */
@@ -61,6 +62,7 @@ class DocumentController extends Controller
      * Get all documents of a subject
      *
      * @param $subject_id
+     * @response array{documents: Document[]}
      * @return JsonResponse
      */
     public function getDocuments($subject_id): JsonResponse

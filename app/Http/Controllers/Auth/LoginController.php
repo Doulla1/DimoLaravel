@@ -12,6 +12,8 @@ class LoginController extends Controller
     /**
      * Login user and get a token
      *
+     * @unauthenticated
+     *
      * @param Request $request
      * @return JsonResponse
      */

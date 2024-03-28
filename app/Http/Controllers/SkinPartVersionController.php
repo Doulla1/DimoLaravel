@@ -14,6 +14,7 @@ class SkinPartVersionController extends Controller
     /**
      * Get all SkinPartVersions
      *
+     * @response array{skinPartVersions: SkinPartVersion[]}
      * @return JsonResponse
      */
     public function getAll(): JsonResponse
@@ -30,6 +31,7 @@ class SkinPartVersionController extends Controller
      * Create a new SkinPartVersion
      *
      * @param  Request  $request
+     * @response array{skinPartVersion: SkinPartVersion}
      * @return JsonResponse
      */
     public function store(Request $request)
@@ -74,6 +76,7 @@ class SkinPartVersionController extends Controller
      * Get SkinPartVersion by ID
      *
      * @param int $id
+     * @response array{skinPartVersion: SkinPartVersion}
      * @return JsonResponse
      */
     public function getById(int $id): JsonResponse
@@ -91,6 +94,7 @@ class SkinPartVersionController extends Controller
      *
      * @param  Request  $request
      * @param int $id
+     * @response array{skinPartVersion: SkinPartVersion}
      * @return JsonResponse
      */
     public function update(Request $request, int $id): JsonResponse

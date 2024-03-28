@@ -29,4 +29,16 @@ class Program extends Model
         return $this->belongsToMany(User::class, "students");
     }
 
+    public function toArray()
+    {
+        return [
+            'id' => $this->id,
+            'name' => $this->name,
+            'description' => $this->description,
+            'illustration' => $this->illustration,
+            'start_date' => $this->start_date,
+            'end_date' => $this->end_date,
+        ];
+    }
+
 }

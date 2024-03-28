@@ -24,7 +24,7 @@ return [
      * Define the theme of the documentation.
      * Available options are `light` and `dark`.
      */
-    'theme' => 'dark',
+    'theme' => 'light',
 
     'info' => [
         /*
@@ -35,7 +35,7 @@ return [
         /*
          * Description rendered on the home page of the API documentation (`/docs/api`).
          */
-        'description' => '',
+        'description' => 'This is **DimoVR** API documentation.',
     ],
 
     /*

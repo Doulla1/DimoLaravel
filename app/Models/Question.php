@@ -21,4 +21,14 @@ class Question extends Model
     {
         return $this->hasMany(Option::class);
     }
+
+    public function toArray()
+    {
+        return [
+            'id' => $this->id,
+            'text' => $this->text,
+            'questionnaire_id' => $this->questionnaire_id,
+            'order' => $this->order
+        ];
+    }
 }
