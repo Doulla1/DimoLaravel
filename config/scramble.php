@@ -35,7 +35,43 @@ return [
         /*
          * Description rendered on the home page of the API documentation (`/docs/api`).
          */
-        'description' => 'This is **DimoVR** API documentation.',
+        'description' =>
+            "## Fonctionnalités de l'API DimoVR
+
+- **Anonyme :**
+  - Consultation des programmes disponibles.
+  - Consultation des matières de chaque programme.
+  - Inscription à l'école avec envoi d'email de confirmation.
+
+- **Inscrits :**
+  - Consultation et modification des informations de compte.
+  - Création de skins personnalisés.
+
+- **Étudiants :**
+  - S'inscrire à un programme (avec envoi d'email de confirmation).
+  - Consultation des emplois du temps (cours).
+  - Consultation et téléchargement des documents des matières.
+  - Consultation des questionnaires rendus accessibles par les profs.
+  - Remplissage et soumission de questionnaires avec notation automatique (en pourcentage).
+  - Consultation des notes des questionnaires rendus.
+
+- **Profs :**
+  - Création de programmes d'étude (automatiquement chef de département).
+  - Consultation de la liste des élèves inscrits à un programme.
+  - Gestion des matières (CRUD).
+  - Gestion des cours dans une matière (CRUD).
+  - Débuter et finir s cours (limite de 5 cours actifs).
+  - Ajout de documents dans une matière.
+  - Rejoindre une matière en tant que prof.
+  - Création de questionnaires.
+  - Ajout de questionnaires à une matière.
+  - Consultation des documents des programmes d'études.
+  - Gestion de l'accès aux questionnaires des matières pour les étudiants.
+
+- **Admins :**
+  - Inscription des profs avec envoi d'email contenant le mot de passe au professeur.
+  - Gestion de toutes les données de l'application.
+",
     ],
 
     /*
@@ -79,7 +115,8 @@ return [
 
     'middleware' => [
         'web',
-        RestrictedDocsAccess::class,
+        //Décommenter la ligne ci-dessous pour activer la restriction d'accès à la documentation
+        //RestrictedDocsAccess::class,
     ],
 
     'extensions' => [],
