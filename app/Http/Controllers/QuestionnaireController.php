@@ -131,7 +131,7 @@ class QuestionnaireController extends Controller
     /**
      * Correct a questionnaire sent by a student and save it.
      *
-     * Chaque bonne réponse vaut 1 point.
+     * Chaque bonne réponse vaut 1 point, chaque mauvaise réponse retire 1 point
      *
      * @param Request $request
      * @response array{score: int}
@@ -163,6 +163,9 @@ class QuestionnaireController extends Controller
                 $question = $questionnaire->questions->where('id', $answer['question_id'])->first();
                 if ($question->options->where('id', $answer['option_id'])->first()->is_correct) {
                     $score++;
+                }
+                else{
+                    $score--;
                 }
             }
             // Calculer le total réponses correctes

@@ -69,6 +69,7 @@ return [
   - Gestion de l'accès aux questionnaires des matières pour les étudiants.
 
 - **Admins :**
+  Note : Toutes les routes de l'admin commencent par `/admin`.
   - Inscription des profs avec envoi d'email contenant le mot de passe au professeur.
   - Gestion de toutes les données de l'application.
 ",
