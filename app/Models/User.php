@@ -65,12 +65,6 @@ class User extends Authenticatable
         return $this->belongsToMany(Program::class,"students");
     }
 
-    // get roles of this user
-    public function roles(): BelongsToMany
-    {
-        return $this->belongsToMany(Role::class);
-    }
-
     public function toArray(): array
     {
         return [
