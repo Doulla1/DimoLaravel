@@ -9,6 +9,7 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Models\User;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
 
 class RegisterController extends Controller
@@ -47,7 +48,17 @@ class RegisterController extends Controller
                 // Assign student role to the user
                 $user->assignRole('student');
                 // Send email confirmation
-                Mail::to($user->email)->send(new RegistrationConfirmation($user));
+                try {
+                    Mail::to($user->email)->send(new RegistrationConfirmation($user));
+                } catch (\Exception $e) {
+                    return response()->json(['message' => 'Registration failed', 'error' => $e->getMessage()], 500);
+                }
+                try {
+                    Mail::to($user->email)->send(new RegistrationConfirmation($user));
+                } catch (\Exception $e) {
+                    // Log the error for future reference
+                    Log::error('Failed to send registration confirmation email: ' . $e->getMessage());
+                }
             }
 
             // create token
@@ -86,11 +97,14 @@ class RegisterController extends Controller
             $user->save ();
 
 
-            // Assign student role to the user
+            // Assign teacher role to the user
             $user->assignRole ('teacher');
-            // Send email confirmation
-            Mail::to ($user->email)->send (new SendTeacherCredentials($user->firstname, $user->lastname, $user->email, $request->password));
-
+            try {
+                Mail::to ($user->email)->send (new SendTeacherCredentials($user->firstname, $user->lastname, $user->email, $request->password));
+            } catch (\Exception $e) {
+                // Log the error for future reference
+                Log::error('Failed to send registration confirmation email: ' . $e->getMessage());
+            }
             // Rajouter les rôles de l'utilisateur
             $user->load ('roles');
             return response ()->json (['user' => $user]);

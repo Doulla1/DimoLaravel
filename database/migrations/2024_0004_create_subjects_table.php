@@ -13,11 +13,10 @@ return new class extends Migration
     {
         Schema::create('subjects', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('program_id')->constrained();
             $table->string('title');
             $table->text('description');
             $table->string ('illustration');
-            $table->UnsignedBigInteger('program_id');
-            $table->foreign('program_id')->references('id')->on('programs');
             $table->timestamps();
         });
     }

@@ -36,7 +36,12 @@ class Subject extends Model
         return $this->belongsToMany(User::class, "teachers");
     }
 
-    public function toArray()
+    public function program(): \Illuminate\Database\Eloquent\Relations\BelongsTo
+    {
+        return $this->belongsTo(Program::class);
+    }
+
+    public function toArray(): array
     {
         return [
             'id' => $this->id,

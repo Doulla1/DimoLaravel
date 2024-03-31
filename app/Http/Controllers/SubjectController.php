@@ -56,7 +56,7 @@ class SubjectController extends Controller
                 }
                 $file = $request->file('illustration');
                 $fileName = $file->store ('uploads', 'public');
-                $subject->illustration = $fileName;
+                $subject->illustration = env('APP_URL').'/storage/'.$fileName;
             }
             else {
                 return response()->json([
@@ -109,7 +109,6 @@ class SubjectController extends Controller
             }
             $subject->title = $request->title;
             $subject->description = $request->description;
-            $subject->illustration = $request->illustration;
             $subject->program_id = $request->program_id;
 
             // Récupérer l'image et la sauvegarder
@@ -130,7 +129,7 @@ class SubjectController extends Controller
                 }
                 $file = $request->file('illustration');
                 $fileName = $file->store ('uploads', 'public');
-                $subject->illustration = $fileName;
+                $subject->illustration = env('APP_URL').'/storage/'.$fileName;
             }
             else {
                 return response()->json([

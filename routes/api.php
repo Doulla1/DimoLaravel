@@ -26,6 +26,9 @@ Route::post('/forgot-password', [ForgotPasswordController::class, 'sendResetLink
 
 // Récupérer toutes les programmes
 Route::get('/programs', [ProgramController::class, 'getAll']);
+// Récupérer un programme par son id
+Route::get('/programs/{id}', [ProgramController::class, 'getById']);
+
 
 // Routes accessibles à tout ceux qui sont connectés
 Route::middleware('auth:sanctum')->group(function () {
@@ -116,9 +119,6 @@ Route::middleware(["auth:sanctum", "checkrole:teacher"])->group(function () {
 
     // Récupérer les programs du teacher connecté
     Route::get('/teached-programs', [ProgramController::class, 'getByConnectedTeacher']);
-
-    // Récupérer un programme par son id
-    Route::get('/programs/{id}', [ProgramController::class, 'getById']);
 
     // Mettre à jour un programme
     Route::put('/programs/{id}', [ProgramController::class, 'update']);

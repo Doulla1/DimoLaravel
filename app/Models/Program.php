@@ -17,10 +17,11 @@ class Program extends Model
         'end_date',
     ];
 
+
     // Get subjects of this program
-    public function subjects()
+    public function subjects(): \Illuminate\Database\Eloquent\Relations\HasMany
     {
-        return $this->hasMany(Subject::class);
+        return $this->hasMany(Subject::class, "program_id", "id");
     }
 
     // Get the users with role "student" in this classroom

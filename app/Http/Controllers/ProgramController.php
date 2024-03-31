@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Mail\RegisterToProgram;
-use App\Models\program;
+use App\Models\Program;
 use App\Models\User;
 use Exception;
 use Illuminate\Http\JsonResponse;
@@ -20,7 +20,7 @@ class ProgramController extends Controller
      * @response array{programs: program[]}
      * @return JsonResponse
      */
-    public function getAll()
+    public function getAll(): JsonResponse
     {
         try {
             $programs = program::all();
@@ -41,7 +41,7 @@ class ProgramController extends Controller
      * @response array{program: program}
      * @return JsonResponse
      */
-    public function create(Request $request)
+    public function create(Request $request): JsonResponse
     {
         try {
             // Vérification de l'existence du professeur
@@ -78,7 +78,7 @@ class ProgramController extends Controller
                 }
                 $file = $request->file('illustration');
                 $fileName = $file->store ('uploads', 'public');
-                $program->illustration = $fileName;
+                $program->illustration = env('APP_URL').'/storage/'.$fileName;
             }
             else {
                 return response()->json([
@@ -223,17 +223,18 @@ class ProgramController extends Controller
     }
 
     /**
-     * Display the specified resource.
+     * Get a program by its id
      *
      * @param int $id
-     * @response array{program: program}
+     * @response array{program: Program, subjects: Subject[]}
      * @return JsonResponse
      */
     public function getById(int $id): JsonResponse
     {
         try {
-            $program = program::find($id);
+            $program = Program::find($id);
             if ($program) {
+                $program->load('subjects');
                 return response()->json(["program"=>$program], 200);
             } else {
                 return response()->json([
@@ -249,39 +250,80 @@ class ProgramController extends Controller
     }
 
     /**
-     * Update the specified resource in storage.
+     * Update an existing program
      *
      * @param Request $request
      * @param int $id
      * @response array{program: program}
      * @return JsonResponse
      */
-    public function update(Request $request, int $id): JsonResponse
+    public function update(Request $request, $id)
     {
         try {
-            // Validation des données
-            $this->validate($request,[
-                'name' => 'required',
-                'head_teacher_id' => 'required'
-            ]);
-
-            // Mise à jour de l'objet
-            $program = program::find($id);
-            if ($program) {
-                $program->name = $request->name;
-                $program->save();
-                return response()->json(["program"=>$program], 200);
-            } else {
+            // Vérification de l'existence du professeur
+            $headTeacher = Auth::user ();
+            if (!$headTeacher || !$headTeacher->hasRole('teacher')) {
                 return response()->json([
-                    "message" => "program not found"
+                    "message" => "You are not a teacher"
                 ], 404);
             }
+
+            // Validation des données
+            $this->validate($request, [
+                'name' => 'string|required',
+                'description' => 'string|required',
+                'start_date' => 'required',
+                'end_date' => 'required',
+            ]);
+
+            // Récupérer le programme à mettre à jour
+            $program = Program::findOrFail($id);
+
+            // Vérifier si le professeur est le responsable du programme
+            if ($program->head_teacher_id !== $headTeacher->id) {
+                return response()->json([
+                    "message" => "You are not allowed to update this program"
+                ], 403);
+            }
+
+            // Mettre à jour les attributs du programme avec les nouvelles valeurs
+            $program->name = $request->name;
+            $program->description = $request->description;
+            $program->start_date = $request->start_date;
+            $program->end_date = $request->end_date;
+            // Récupérer l'image et la sauvegarder
+            if ($request->hasFile('illustration')) {
+                //Vérifier si le fichier est une image
+                $validator = Validator::make($request->all(), [
+                    'illustration' => 'mimes:jpeg,png,jpg,gif,svg',
+                ]);
+                if ($validator->fails()) {
+                    return response()->json([
+                        "message" => "Illustration must be an image"
+                    ], 400);
+                }
+                $file = $request->file('illustration');
+                $fileName = $file->store ('uploads', 'public');
+                $program->illustration = env('APP_URL').'/storage/'.$fileName;
+            }
+            else {
+                return response()->json([
+                    "message" => "Illustration is required"
+                ], 400);
+            }
+
+            // Sauvegarder les modifications apportées au programme
+            $program->save();
+
+            return response()->json(["program" => $program], 200);
         } catch (Exception $e) {
             return response()->json([
-                "message" => "An error occurred while updating program"
+                "status" => 0,
+                "message" => "An error occurred while updating program : " . $e->getMessage()
             ], 500);
         }
     }
+
 
     /**
      * Remove the specified resource from storage.
