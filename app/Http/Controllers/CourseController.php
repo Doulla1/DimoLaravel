@@ -143,6 +143,16 @@ class CourseController extends Controller
             $course->subject_id = $request->subject_id;
             $course->start_date = $request->start_date;
             $course->end_date = $request->end_date;
+
+            // Vérifier s'il n'y a pas déjà 5 cours actifs
+            $activeCourses = Course::where('is_active', true)->count();
+            if ($activeCourses == 5 && $request->is_active == "true") {
+                return response()->json([
+                    "message" => "There are already 5 active courses. Wait for a course to end before starting a new one"
+                ], 400);
+            }
+
+            $course->is_active = $request->is_active == "true";
             $course->save();
 
             return response()->json([
@@ -150,7 +160,7 @@ class CourseController extends Controller
             ]);
         } catch (Exception $e) {
             return response()->json([
-                "message" => "An error occurred while creating course"
+                "message" => "An error occurred while creating course" . $e->getMessage()
             ], 500);
         }
     }

@@ -101,6 +101,53 @@ class QuestionnaireController extends Controller
     }
 
     /**
+     * Create a full questionnaire with questions and options
+     *
+     * @param Request $request
+     * @response array{questionnaire: Questionnaire}
+     * @return JsonResponse
+     */
+    public function createFull(Request $request): JsonResponse
+    {
+        try {
+            // validate the request
+            $request->validate([
+                'title' => 'required|string',
+                'description' => 'required|string',
+                'subject_id' => 'required|integer',
+                'questions' => 'required|array',
+                'questions.*.text' => 'required|string',
+                'questions.*.order' => 'required|integer',
+                'questions.*.options' => 'required|array',
+                'questions.*.options.*.text' => 'required|string',
+            ]);
+            // Create the questionnaire
+            $questionnaire = new Questionnaire();
+            $questionnaire->title = $request->title;
+            $questionnaire->description = $request->description;
+            $questionnaire->subject_id = $request->subject_id;
+            $questionnaire->save();
+
+            foreach ($request->questions as $question) {
+                $newQuestion = $questionnaire->questions()->create([
+                    'text' => $question['text'],
+                    'order' => $question['order'],
+                ]);
+                foreach ($question['options'] as $option) {
+                    $newQuestion->options()->create([
+                        'text' => $option['text'],
+                        'is_correct' => $option['is_correct'] == "true",
+                    ]);
+                }
+            }
+            $questionnaire->load('questions');
+            return response()->json(['questionnaire' => $questionnaire], 201);
+        } catch (\Exception $e) {
+            return response()->json(['message' => $e->getMessage()], 500);
+        }
+    }
+
+    /**
      * Update a questionnaire.
      *
      * @param Request $request

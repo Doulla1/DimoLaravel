@@ -21,15 +21,8 @@ class DocumentController extends Controller
      * @return JsonResponse
      * @throws ValidationException
      */
-    public function addDocuments(Request $request)
+    public function addDocument(Request $request): JsonResponse
     {
-        // Vérification du role de l'utilisateur
-        $user = Auth::user();
-        if (!$user || !$user->hasRole('teacher')) {
-            return response()->json([
-                "message" => "You are not a teacher"
-            ], 404);
-        }
         // Validation des données
         $this->validate($request,[
             'title' => 'string|required',
@@ -37,20 +30,18 @@ class DocumentController extends Controller
         ]);
 
         // Sauvegarde des fichiers
-        if ($request->hasFile('files')) {
+        if ($request->hasFile('file')) {
             // Parcourir tous les fichiers et les sauvegarder
-            $files = $request->file('files');
-            $documents = [];
-            foreach ($files as $file) {
-                $fileName = $file->store('uploads', 'public');
-                $document = new Document();
-                $document->title = $request->title;
-                $document->file_path = $fileName;
-                $document->subject_id = $request->subject_id;
-                $document->save();
-                $documents[] = $document;
-            }
-            return response()->json(["documents"=>$documents], 200);
+            $file = $request->file('file');
+            $fileName = $file->store('uploads', 'public');
+
+            $document = new Document();
+            $document->title = $request->title;
+            $document->file_path = env('APP_URL')."/storage/".$fileName;
+            $document->subject_id = $request->subject_id;
+            $document->save();
+
+            return response()->json(["document"=>$document], 200);
         } else {
             return response()->json([
                 "message" => "File not found"

@@ -28,6 +28,10 @@ Route::post('/forgot-password', [ForgotPasswordController::class, 'sendResetLink
 Route::get('/programs', [ProgramController::class, 'getAll']);
 // Récupérer un programme par son id
 Route::get('/programs/{id}', [ProgramController::class, 'getById']);
+// Récupérer les matières d'un programme
+Route::get('/programs/{id}/subjects', [ProgramController::class, 'getSubjectsByProgram']);
+// Récupérer une matière par son id
+Route::get('/subjects/{id}', [SubjectController::class, 'getById']);
 
 
 // Routes accessibles à tout ceux qui sont connectés
@@ -133,7 +137,7 @@ Route::middleware(["auth:sanctum", "checkrole:teacher"])->group(function () {
     Route::put('/subjects/{id}', [SubjectController::class, 'update']);
 
     // Ajouter un document à une matière
-    Route::post('/add-documents', [DocumentController::class, 'addDocuments']);
+    Route::post('/add-document', [DocumentController::class, 'addDocument']);
 
     // Rejoindre une matière en tant que teacher
     Route::post('/join-subject', [SubjectController::class, 'joinSubject']);
@@ -188,6 +192,9 @@ Route::middleware(["auth:sanctum", "checkrole:teacher"])->group(function () {
 
     // Créer un questionnaire
     Route::post('/questionnaires', [QuestionnaireController::class, 'create']);
+
+    // Créer un questionnaire avec des questions et des options
+    Route::post('/questionnaires/create-full', [QuestionnaireController::class, 'createFull']);
 
     // Mettre à jour un questionnaire
     Route::put('/questionnaires/{id}', [QuestionnaireController::class, 'update']);

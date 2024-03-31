@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Mail\RegisterToProgram;
 use App\Models\Program;
+use App\Models\Subject;
 use App\Models\User;
 use Exception;
 use Illuminate\Http\JsonResponse;
@@ -245,6 +246,26 @@ class ProgramController extends Controller
         catch (Exception $e) {
             return response()->json([
                 "message" => "An error occurred while getting program"
+            ], 500);
+        }
+    }
+
+    /**
+     * Get all subjects of a program
+     *
+     * @param int $id
+     * @return JsonResponse
+     * @response array{subjects: Subject[]}
+     */
+    public function getSubjectsByProgram(int $id): JsonResponse
+    {
+        try {
+            $subjects = Subject::where('program_id', $id)->get();
+            return response()->json(["subjects"=>$subjects], 200);
+        } catch (Exception $e) {
+            return response()->json([
+                "status" => 0,
+                "message" => "An error occurred while getting subjects : ".$e->getMessage()
             ], 500);
         }
     }

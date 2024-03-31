@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Program;
 use App\Models\Subject;
 use App\Models\User;
 use Exception;
@@ -12,6 +13,51 @@ use Illuminate\Support\Facades\Validator;
 
 class SubjectController extends Controller
 {
+
+    /**
+     * Get all subjects
+     *
+     * @response array{subjects: \App\Models\Subject[]}
+     * @return JsonResponse
+     */
+    public function index(): JsonResponse
+    {
+        try {
+            $subjects = Subject::all();
+            return response()->json(["subjects"=>$subjects], 200);
+        } catch (Exception $e) {
+            return response()->json([
+                "status" => 0,
+                "message" => "An error occurred while fetching subjects : ".$e->getMessage()
+            ], 500);
+        }
+    }
+
+    /**
+     * Get a subject
+     *
+     * @param $id
+     * @response array{subject: Subject}
+     * @return JsonResponse
+     */
+    public function getById($id): JsonResponse
+    {
+        try {
+            $subject = Subject::find($id);
+            if (!$subject) {
+                return response()->json([
+                    "message" => "Subject not found"
+                ], 404);
+            }
+            return response()->json(["subject"=>$subject], 200);
+        } catch (Exception $e) {
+            return response()->json([
+                "status" => 0,
+                "message" => "An error occurred while fetching subject : ".$e->getMessage()
+            ], 500);
+        }
+    }
+
     /**
      * Create a new subject
      *
@@ -75,6 +121,7 @@ class SubjectController extends Controller
             ], 500);
         }
     }
+
 
     /**
      * Update a subject
