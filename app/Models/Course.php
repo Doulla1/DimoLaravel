@@ -18,6 +18,16 @@ class Course extends Model
         'is_active'
     ];
 
+    public function teacher(): \Illuminate\Database\Eloquent\Relations\BelongsTo
+    {
+        return $this->belongsTo(User::class, 'teacher_id');
+    }
+
+    public function subject(): \Illuminate\Database\Eloquent\Relations\BelongsTo
+    {
+        return $this->belongsTo(Subject::class, 'subject_id');
+    }
+
     public function toArray()
     {
         return [

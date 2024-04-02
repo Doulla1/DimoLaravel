@@ -25,7 +25,7 @@ class Program extends Model
     }
 
     // Get the users with role "student" in this classroom
-    public function students()
+    public function students(): \Illuminate\Database\Eloquent\Relations\BelongsToMany
     {
         return $this->belongsToMany(User::class, "students");
     }

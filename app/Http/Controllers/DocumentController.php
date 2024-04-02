@@ -85,4 +85,35 @@ class DocumentController extends Controller
             ], 500);
         }
     }
+
+    /**
+     * Delete a document
+     *
+     * @param $document_id
+     * @return JsonResponse
+     */
+    public function deleteDocument($document_id): JsonResponse
+    {
+        try {
+            $document = Document::find($document_id);
+            if (!$document) {
+                return response()->json([
+                    "message" => "Document not found"
+                ], 404);
+            }
+            // Supprimer le fichier
+            $file_path = str_replace(env('APP_URL')."/storage/", "", $document->file_path);
+            unlink(storage_path('app/public/'.$file_path));
+
+            $document->delete();
+            return response()->json([
+                "message" => "Document deleted successfully"
+            ], 200);
+        }
+        catch (Exception $e){
+            return response()->json([
+                "message" => "An error occurred while deleting document" . $e->getMessage()
+            ], 500);
+        }
+    }
 }

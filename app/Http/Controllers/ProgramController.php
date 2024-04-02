@@ -137,11 +137,13 @@ class ProgramController extends Controller
             if (!$user->hasRole('student')) {
                 return response()->json(['message' => 'You are not a student'], 401);
             }
-            $user = User::find($user->id);
+
+            $user = User::with('teachedSubjects', 'attendedPrograms')->find($user->id);
+
             // Récupérer les programmes auxquels l'étudiant est inscrit
-            $programs = $user->attendedPrograms();
+            $programs = $user->attendedPrograms;
             // Charger les matières de chaque programme
-            $programs->load('subjects');
+            //$programs->load('subjects');
             return response()->json(["programs"=>$programs]);
         } catch (Exception $e) {
             return response()->json($e->getMessage(), 500);

@@ -63,6 +63,9 @@ Route::middleware('auth:sanctum')->group(function () {
     // Récupérer une SkinPartVersion par son id
     Route::get('/skinPartVersions/{id}', [SkinPartVersionController::class, 'getById']);
 
+    // Récupérer les cours d'une matière
+    Route::get('/courses/subject/{subject_id}', [CourseController::class, 'getBySubject']);
+
     // Se déconnecter
     Route::post('/logout', [LoginController::class, 'logout']);
 });
@@ -138,6 +141,9 @@ Route::middleware(["auth:sanctum", "checkrole:teacher"])->group(function () {
 
     // Ajouter un document à une matière
     Route::post('/add-document', [DocumentController::class, 'addDocument']);
+
+    // Supprimer un document
+    Route::delete('/documents/{id}', [DocumentController::class, 'deleteDocument']);
 
     // Rejoindre une matière en tant que teacher
     Route::post('/join-subject', [SubjectController::class, 'joinSubject']);
@@ -238,9 +244,6 @@ Route::middleware(["auth:sanctum", "checkrole:admin"])->group(function () {
 
     // Attribuer un rôle à un utilisateur
     Route::post('/admin/assign-role', [UserController::class, 'assignRole']);
-
-    // Récupérer tous les cours
-    Route::get('/admin/courses', [CourseController::class, 'getAll']);
 
     // Récuperer un cours par son id
     Route::get('/admin/courses/{id}', [CourseController::class, 'getById']);

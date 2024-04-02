@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Course;
+use App\Models\Program;
 use Exception;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -19,7 +20,7 @@ class CourseController extends Controller
     {
         try {
             $courses = Course::all();
-            return response()->json(["cours"=>$courses], 200);
+            return response()->json(["courses"=>$courses], 200);
         } catch (Exception $e) {
             return response()->json([
                 "status" => 0,
@@ -40,7 +41,7 @@ class CourseController extends Controller
         try {
             $course = Course::find($id);
             if ($course) {
-                return response()->json(["cours"=>$course], 200);
+                return response()->json(["course"=>$course], 200);
             } else {
                 return response()->json([
                     "message" => "Course not found"
@@ -64,7 +65,7 @@ class CourseController extends Controller
     {
         try {
             $courses = Course::where('teacher_id', $teacherId)->get();
-            return response()->json(["cours"=>$courses], 200);
+            return response()->json(["courses"=>$courses], 200);
         } catch (Exception $e) {
             return response()->json([
                 "message" => "An error occurred while getting courses"
@@ -83,7 +84,7 @@ class CourseController extends Controller
         try {
             $teacherId = auth()->user()->id;
             $courses = Course::where('teacher_id', $teacherId)->get();
-            return response()->json(["cours"=>$courses], 200);
+            return response()->json(["courses"=>$courses], 200);
         } catch (Exception $e) {
             return response()->json([
                 "message" => "An error occurred while getting courses"
@@ -97,18 +98,56 @@ class CourseController extends Controller
      * @response array{cours: Course[]}
      * @return JsonResponse
      */
-    public function getByConnectedStudent()
+    public function getByConnectedStudent(): JsonResponse
     {
         try {
             $studentId = auth()->user()->id;
             // Trouver tous les cours qui font partie des matières des programmes auxquels l'étudiant est inscrit
-            $courses = Course::whereHas('subject.programs.students', function ($query) use ($studentId) {
+            $courses = Course::whereHas('subject.program.students', function ($query) use ($studentId) {
                 $query->where('students.id', $studentId);
             })->get();
-            return response()->json(["cours"=>$courses], 200);
+            return response()->json(["courses"=>$courses], 200);
         } catch (Exception $e) {
             return response()->json([
-                "message" => "An error occurred while getting courses"
+                "message" => "An error occurred while getting courses :" . $e->getMessage()
+            ], 500);
+        }
+    }
+
+    /**
+     * Get courses of Subject
+     *
+     * @response array{cours: Course[]}
+     * @param int $subject_id
+     * @return JsonResponse
+     */
+    public function getBySubject(int $subject_id): JsonResponse
+    {
+        //Vérifier si l'étudiant est inscrit au programme de la matière
+        $student = auth()->user();
+
+        // Si l'utilisateur est un étudiant, vérifier s'il est inscrit au programme de la matière
+        /*
+        if($student->hasRole('student')){
+            $studentId = $student->id;
+            $isStudentInProgram = Program::whereHas('students', function ($query) use ($studentId) {
+                $query->where('students.id', $studentId);
+            })->whereHas('subjects', function ($query) use ($subject_id) {
+                $query->where('subjects.id', $subject_id);
+            })->count();
+            if (!$isStudentInProgram) {
+                return response()->json([
+                    "message" => "You are not enrolled in the program of this subject"
+                ], 404);
+            }
+        }
+        */
+        try {
+            $courses = Course::where('subject_id', $subject_id)->get();
+            return response()->json(["courses"=>$courses], 200);
+        } catch (Exception $e) {
+            return response()->json([
+                "message" => "An error occurred while getting courses" . $e->getMessage()
             ], 500);
         }
     }
@@ -156,7 +195,7 @@ class CourseController extends Controller
             $course->save();
 
             return response()->json([
-                "cours" => $course
+                "courses" => $course
             ]);
         } catch (Exception $e) {
             return response()->json([
