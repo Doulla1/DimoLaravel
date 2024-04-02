@@ -101,6 +101,23 @@ class QuestionnaireController extends Controller
     }
 
     /**
+     * Get Questionnaire by Subject
+     *
+     * @param Request $request
+     * @response array{questionnaire: Questionnaire}
+     * @return JsonResponse
+     */
+    public function getBySubject(int $subjectId): JsonResponse
+    {
+        try {
+            $questionnaires = Questionnaire::where('subject_id', $subjectId)->get();
+            return response()->json(['questionnaires' => $questionnaires], 200);
+        } catch (\Exception $e) {
+            return response()->json(['message' => $e->getMessage()], 404);
+        }
+    }
+
+    /**
      * Create a full questionnaire with questions and options
      *
      * @param Request $request
@@ -109,6 +126,7 @@ class QuestionnaireController extends Controller
      */
     public function createFull(Request $request): JsonResponse
     {
+        //return response()->json(['requete' => $request->all()], 501);
         try {
             // validate the request
             $request->validate([

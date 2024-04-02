@@ -13,7 +13,7 @@ class Questionnaire extends Model
     protected $fillable = [
         'title',
         'description',
-        'lesson_id',
+        'subject_id',
         'is_visible'
     ];
 
@@ -29,7 +29,7 @@ class Questionnaire extends Model
             'id' => $this->id,
             'title' => $this->title,
             'description' => $this->description,
-            'lesson_id' => $this->lesson_id,
+            'subject_id' => $this->lesson_id,
             'is_visible' => $this->is_visible
         ];
     }

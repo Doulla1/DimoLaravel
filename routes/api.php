@@ -104,10 +104,10 @@ Route::middleware(["auth:sanctum", "checkrole:teacher"])->group(function () {
     Route::post('/courses', [CourseController::class, 'create']);
 
     // Commencer un cours
-    Route::post('/courses/{course_id}/start', [CourseController::class, 'start']);
+    Route::put('/courses/{course_id}/start', [CourseController::class, 'start']);
 
     // Terminer un cours
-    Route::post('/courses/{course_id}/end', [CourseController::class, 'end']);
+    Route::put('/courses/{course_id}/end', [CourseController::class, 'end']);
 
     // Récupérer les cours du teacher connecté
     Route::get('/teached-courses', [CourseController::class, 'getByConnectedTeacher']);
@@ -193,6 +193,9 @@ Route::middleware(["auth:sanctum", "checkrole:teacher"])->group(function () {
     // Récupérer tous les questionnaires
     Route::get('/questionnaires', [QuestionnaireController::class, 'getAll']);
 
+    // Récupérer les questionnaire par matière
+    Route::get('/questionnaires/subject/{subject_id}', [QuestionnaireController::class, 'getBySubject']);
+
     // Récupère un questionnaire par son id
     Route::get('/questionnaires/{id}', [QuestionnaireController::class, 'getUnique']);
 
@@ -206,10 +209,10 @@ Route::middleware(["auth:sanctum", "checkrole:teacher"])->group(function () {
     Route::put('/questionnaires/{id}', [QuestionnaireController::class, 'update']);
 
     // Make a questionnaire available to students.
-    Route::post('/questionnaires/{id}/publish', [QuestionnaireController::class, 'makeAvailable']);
+    Route::put('/questionnaires/{id}/publish', [QuestionnaireController::class, 'makeAvailable']);
 
     // Make a questionnaire unavailable to students.
-    Route::post('/questionnaires/{id}/unpublish', [QuestionnaireController::class, 'makeUnavailable']);
+    Route::put('/questionnaires/{id}/unpublish', [QuestionnaireController::class, 'makeUnavailable']);
 
     // Supprimer un questionnaire
     Route::delete('/questionnaires/{id}', [QuestionnaireController::class, 'delete']);
