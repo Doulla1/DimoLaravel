@@ -39,6 +39,9 @@ Route::middleware('auth:sanctum')->group(function () {
     // Récupérer les informations de l'utilisateur connecté
     Route::get('/fetchUser',[UserController::class, 'getConnectedUser']);
 
+    // Récupère un questionnaire par son id
+    Route::get('/questionnaires/{id}', [QuestionnaireController::class, 'getUnique']);
+
     // Récupérer les documents d'une matière
     Route::get('/documents/{subject_id}', [DocumentController::class, 'getDocuments']);
 
@@ -78,8 +81,8 @@ Route::middleware(["auth:sanctum", "checkrole:student"])->group(function () {
     // S'inscrire à un programme
     Route::post('/programs/register', [ProgramController::class, 'registerStudent']);
 
-    // Récupérer les questionnaires d'un programme auquel le student est inscrit
-    Route::get('/student-questionnaires', [QuestionnaireController::class, 'getByConnectedStudent']);
+    // Récupérer les questionnaires d'une matière auquel le student est inscrit
+    Route::get('/student-questionnaires/{subjectId}', [QuestionnaireController::class, 'getByConnectedStudent']);
 
     // Enregistrer les réponses d'un questionnaire
     Route::post('/questionnaires/answers', [QuestionnaireController::class, 'saveAnswers']);
@@ -195,9 +198,6 @@ Route::middleware(["auth:sanctum", "checkrole:teacher"])->group(function () {
 
     // Récupérer les questionnaire par matière
     Route::get('/questionnaires/subject/{subject_id}', [QuestionnaireController::class, 'getBySubject']);
-
-    // Récupère un questionnaire par son id
-    Route::get('/questionnaires/{id}', [QuestionnaireController::class, 'getUnique']);
 
     // Créer un questionnaire
     Route::post('/questionnaires', [QuestionnaireController::class, 'create']);

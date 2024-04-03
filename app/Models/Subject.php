@@ -25,7 +25,7 @@ class Subject extends Model
     }
 
     // Got many questionnaires
-    public function questionnaires()
+    public function questionnaires(): HasMany
     {
         return $this->hasMany(Questionnaire::class);
     }

@@ -8,8 +8,6 @@ use Illuminate\Http\Request;
 
 class QuestionController extends Controller
 {
-    // CRUD for questions with try-catch and JsonResponse
-
     /**
      * Get all questions
      *

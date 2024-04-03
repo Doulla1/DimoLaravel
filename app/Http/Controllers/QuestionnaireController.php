@@ -7,6 +7,7 @@ use App\Models\Response;
 use App\Models\Statistic;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class QuestionnaireController extends Controller
 {
@@ -38,13 +39,31 @@ class QuestionnaireController extends Controller
      */
     public function getUnique(int $id): JsonResponse
     {
-        try {
-            $questionnaire = Questionnaire::findOrFail($id);
-            $questionnaire->load('questions');
-            return response()->json(['questionnaire' => $questionnaire], 200);
-        } catch (\Exception $e) {
-            return response()->json(['message' => $e->getMessage()], 404);
+        // Si l'utilsateur est un étudiant, vérifier si le questionnaire est visible et s'il fait partie des questionnaires d'une matière dont l'étudiant est inscrit au programme
+        $user = Auth::user();
+        $questionnaire = Questionnaire::findOrFail($id);
+        if($user->hasRole('student')){
+            try {
+                $questionnaire = Questionnaire::where('is_visible', true)
+                    ->where('id', $id)
+                    ->whereHas('subject.program', function ($query) {
+                        $query->whereHas('students', function ($query) {
+                            $query->where('user_id', auth()->user()->id);
+                        });
+                    })
+                    ->first();
+                if(!$questionnaire){
+                    return response()->json(['message' => 'Questionnaire not found'], 404);
+                }
+            } catch (\Exception $e) {
+                return response()->json(['message' => "You are not allowed to access this document" . $e->getMessage()], 403);
+            }
         }
+        elseif (!$user->hasRole('teacher') && !$user->hasRole('admin')){
+            return response()->json(['message' => "You are not allowed to access this document", 403]);
+        }
+        // Retourner le questionnaire
+        return response()->json(['questionnaire' => $questionnaire]);
     }
 
     /**
@@ -60,7 +79,7 @@ class QuestionnaireController extends Controller
             // Retrouver tous les questionnaires dont la matière fait partie d'un programme où l'étudiant est inscrit
             $questionnaires = Questionnaire::where('subject_id', $subjectId)
                 ->where('is_visible', true)
-                ->whereHas('subject.programs', function ($query) {
+                ->whereHas('subject.program', function ($query) {
                     $query->whereHas('students', function ($query) {
                         $query->where('user_id', auth()->user()->id);
                     });
@@ -207,32 +226,39 @@ class QuestionnaireController extends Controller
         try {
             //valider the request
             $request->validate([
-                'questionnaire_id' => 'required|integer',
-                'answers' => 'required|array',
-                'answers.*.question_id' => 'required|integer',
-                'answers.*.option_id' => 'required|integer',
+                'id' => 'required|integer',
+                'questions' => 'required|array',
+                'questions.*.id' => 'required|integer',
+                'questions.*.options' => 'required|array',
+                'questions.*.options.*.id' => 'required|integer',
+                'questions.*.options.*.selected' => 'required|boolean',
             ]);
             // Trouver le questionnaire
-            $questionnaire = Questionnaire::findOrFail($request->questionnaire_id);
+            $questionnaire = Questionnaire::findOrFail($request->id);
 
             $score = 0;
-            foreach ($request->answers as $answer) {
+            foreach ($request->questions as $questionAnswered) {
                 // Enregistrer la réponse
                 $response = new Response();
                 $response->user_id = auth()->user()->id;
-                $response->question_id = $answer['question_id'];
-                $response->option_id = $answer['option_id'];
+                $response->question_id = $questionAnswered['id'];
+                $response->option_id = $questionAnswered['options'][0]['id'];
                 $response->save();
 
                 // Corriger le questionnaire
-                $question = $questionnaire->questions->where('id', $answer['question_id'])->first();
-                if ($question->options->where('id', $answer['option_id'])->first()->is_correct) {
-                    $score++;
-                }
-                else{
-                    $score--;
+                $question = $questionnaire->questions->where('id', $questionAnswered['id'])->first();
+                // Pour chaque option de $questionAnswered qui est correcte, ajouter 1 point
+                // Pour chaque option de $questionAnswered qui est incorrecte, retirer 1 point
+                foreach ($questionAnswered['options'] as $optionAnswered) {
+                    $option = $question->options->where('id', $optionAnswered['id'])->first();
+                    if ($option->is_correct && $optionAnswered['selected']) {
+                        $score++;
+                    } elseif (!$option->is_correct && $optionAnswered['selected']) {
+                        $score--;
+                    }
                 }
             }
+
             // Calculer le total réponses correctes
             $totalCorrectAnswers = $questionnaire->questions->sum(function ($question) {
                 return $question->options->where('is_correct', true)->count();

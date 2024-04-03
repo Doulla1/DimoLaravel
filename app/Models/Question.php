@@ -28,7 +28,8 @@ class Question extends Model
             'id' => $this->id,
             'text' => $this->text,
             'questionnaire_id' => $this->questionnaire_id,
-            'order' => $this->order
+            'order' => $this->order,
+            'options' => $this->options->toArray()
         ];
     }
 }

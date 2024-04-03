@@ -21,7 +21,6 @@ class Option extends Model
             'id' => $this->id,
             'text' => $this->text,
             'question_id' => $this->question_id,
-            'is_correct' => $this->is_correct,
         ];
     }
 }

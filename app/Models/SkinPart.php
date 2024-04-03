@@ -24,6 +24,7 @@ class SkinPart extends Model
         return [
             'id' => $this->id,
             'name' => $this->name,
+            'versions' => $this->versions->toArray()
         ];
     }
 }
