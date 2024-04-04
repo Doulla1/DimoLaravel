@@ -39,6 +39,7 @@ Route::middleware('auth:sanctum')->group(function () {
     // Récupérer les informations de l'utilisateur connecté
     Route::get('/fetchUser',[UserController::class, 'getConnectedUser']);
 
+
     // Récupère un questionnaire par son id
     Route::get('/questionnaires/{id}', [QuestionnaireController::class, 'getUnique']);
 
