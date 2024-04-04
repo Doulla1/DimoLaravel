@@ -79,7 +79,7 @@ class ProgramController extends Controller
                 }
                 $file = $request->file('illustration');
                 $fileName = $file->store ('uploads', 'public');
-                $program->illustration = env('APP_URL').'/storage/'.$fileName;
+                $program->illustration = env('APP_URL', "https://api.dimovr.com").'/storage/'.$fileName;
             }
             else {
                 return response()->json([
@@ -327,7 +327,7 @@ class ProgramController extends Controller
                 }
                 $file = $request->file('illustration');
                 $fileName = $file->store ('uploads', 'public');
-                $program->illustration = env('APP_URL').'/storage/'.$fileName;
+                $program->illustration = env('APP_URL', "https://api.dimovr.com").'/storage/'.$fileName;
             }
             else {
                 return response()->json([

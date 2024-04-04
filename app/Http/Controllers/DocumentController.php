@@ -37,7 +37,7 @@ class DocumentController extends Controller
 
             $document = new Document();
             $document->title = $request->title;
-            $document->file_path = env('APP_URL')."/storage/".$fileName;
+            $document->file_path = env('APP_URL', "https://api.dimovr.com")."/storage/".$fileName;
             $document->subject_id = $request->subject_id;
             $document->save();
 
@@ -102,7 +102,7 @@ class DocumentController extends Controller
                 ], 404);
             }
             // Supprimer le fichier
-            $file_path = str_replace(env('APP_URL')."/storage/", "", $document->file_path);
+            $file_path = str_replace(env('APP_URL', "https://api.dimovr.com")."/storage/", "", $document->file_path);
             unlink(storage_path('app/public/'.$file_path));
 
             $document->delete();

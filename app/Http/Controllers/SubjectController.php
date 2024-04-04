@@ -102,7 +102,7 @@ class SubjectController extends Controller
                 }
                 $file = $request->file('illustration');
                 $fileName = $file->store ('uploads', 'public');
-                $subject->illustration = env('APP_URL').'/storage/'.$fileName;
+                $subject->illustration = env('APP_URL', "https://api.dimovr.com").'/storage/'.$fileName;
             }
             else {
                 return response()->json([
@@ -176,7 +176,7 @@ class SubjectController extends Controller
                 }
                 $file = $request->file('illustration');
                 $fileName = $file->store ('uploads', 'public');
-                $subject->illustration = env('APP_URL').'/storage/'.$fileName;
+                $subject->illustration = env('APP_URL', "https://api.dimovr.com").'/storage/'.$fileName;
             }
             else {
                 return response()->json([
