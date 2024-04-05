@@ -9,9 +9,7 @@ use App\Http\Controllers\ProgramController;
 use App\Http\Controllers\CourseController;
 use App\Http\Controllers\QuestionController;
 use App\Http\Controllers\QuestionnaireController;
-use App\Http\Controllers\SkinController;
-use App\Http\Controllers\SkinPartController;
-use App\Http\Controllers\SkinPartVersionController;
+use App\Http\Controllers\Skin2Controller;
 use App\Http\Controllers\SubjectController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
@@ -21,6 +19,7 @@ Route::get ('/', function () {
     return response()->json(['message' => 'Welcome to the API of DimoVR.'], 200);
 });
 Route::post('/login', [LoginController::class, 'login']);
+Route::post('/logout', [LoginController::class, 'logout']);
 Route::post('/register', [RegisterController::class, 'register']);
 Route::post('/forgot-password', [ForgotPasswordController::class, 'sendResetLinkEmail']);
 
@@ -34,11 +33,11 @@ Route::get('/programs/{id}/subjects', [ProgramController::class, 'getSubjectsByP
 Route::get('/subjects/{id}', [SubjectController::class, 'getById']);
 
 
+
 // Routes accessibles à tout ceux qui sont connectés
 Route::middleware('auth:sanctum')->group(function () {
     // Récupérer les informations de l'utilisateur connecté
     Route::get('/fetchUser',[UserController::class, 'getConnectedUser']);
-
 
     // Récupère un questionnaire par son id
     Route::get('/questionnaires/{id}', [QuestionnaireController::class, 'getUnique']);
@@ -52,26 +51,14 @@ Route::middleware('auth:sanctum')->group(function () {
     // Mettre à jour le mot de passe de l'utilisateur connecté
     Route::put('/updateUserPassword', [UserController::class, 'updatePassword']);
 
-    // Créer un skin
-    Route::post('/skins', [SkinController::class, 'store']);
-
-    // Récupérer toutes les SkinParts
-    Route::get('/skinParts', [SkinPartController::class, 'getAll']);
-
-    // Récupérer une SkinPart par son id
-    Route::get('/skinParts/{id}', [SkinPartController::class, 'getById']);
-
-    // Récupérer toutes les SkinPartVersions
-    Route::get('/skinPartVersions', [SkinPartVersionController::class, 'getAll']);
-
-    // Récupérer une SkinPartVersion par son id
-    Route::get('/skinPartVersions/{id}', [SkinPartVersionController::class, 'getById']);
-
     // Récupérer les cours d'une matière
     Route::get('/courses/subject/{subject_id}', [CourseController::class, 'getBySubject']);
 
-    // Se déconnecter
-    Route::post('/logout', [LoginController::class, 'logout']);
+    // Récupérer son skin
+    Route::get('/skin', [Skin2Controller::class, 'getByUser']);
+
+    // Mettre à jour son skin
+    Route::put('/skin', [Skin2Controller::class, 'update']);
 });
 
 // Routes accessibles aux students
@@ -258,40 +245,5 @@ Route::middleware(["auth:sanctum", "checkrole:admin"])->group(function () {
     // Supprimer un programme
     Route::delete('/admin/programs/{id}', [ProgramController::class, 'destroy']);
 
-    // CRUD des skins
-
-    // Récupérer tous les skins
-    Route::get('/admin/skins', [SkinController::class, 'getAll']);
-
-    // Récupérer un skin par son id
-    Route::get('/admin/skins/{id}', [SkinController::class, 'get']);
-
-    // Mettre à jour un skin
-    Route::put('/admin/skins/{id}', [SkinController::class, 'update']);
-
-    // Supprimer un skin
-    Route::delete('/admin/skins/{id}', [SkinController::class, 'delete']);
-
-    // CRUD des SkinParts
-
-    // Créer une SkinPart
-    Route::post('/admin/skinParts', [SkinPartController::class, 'store']);
-
-    // Mettre à jour une SkinPart
-    Route::put('/admin/skinParts/{id}', [SkinPartController::class, 'update']);
-
-    // Supprimer une SkinPart
-    Route::delete('/admin/skinParts/{id}', [SkinPartController::class, 'delete']);
-
-    // CRUD des SkinPartVersions
-
-    // Créer une SkinPartVersion
-    Route::post('/admin/skinPartVersions', [SkinPartVersionController::class, 'store']);
-
-    // Mettre à jour une SkinPartVersion
-    Route::put('/admin/skinPartVersions/{id}', [SkinPartVersionController::class, 'update']);
-
-    // Supprimer une SkinPartVersion
-    Route::delete('/admin/skinPartVersions/{id}', [SkinPartVersionController::class, 'delete']);
 
 });

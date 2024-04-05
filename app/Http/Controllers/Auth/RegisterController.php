@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Auth;
 
 use App\Mail\RegistrationConfirmation;
 use App\Mail\SendTeacherCredentials;
+use App\Models\Skin2;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
@@ -62,6 +63,16 @@ class RegisterController extends Controller
                 }
             }
 
+            // Create a default skin for the user
+            $skin = new Skin2;
+            $skin->user_id = $user->id;
+            $skin->hair_version = 0;
+            $skin->hair_color = "#5286FF";
+            $skin->upper_body_color = "#F96C9D";
+            $skin->lower_body_color = "#F96C9D";
+            $skin->skin_color = "#D37878";
+            $skin->save();
+
             // create token
             $token = $user->createToken("CLE_SECRETE")->plainTextToken;
 
@@ -96,6 +107,16 @@ class RegisterController extends Controller
             $user->email = $request->email;
             $user->password = Hash::make ($request->password);
             $user->save ();
+
+            // Create a default skin for the user
+            $skin = new Skin2;
+            $skin->user_id = $user->id;
+            $skin->hair_version = 0;
+            $skin->hair_color = "#5286FF";
+            $skin->upper_body_color = "#F96C9D";
+            $skin->lower_body_color = "#F96C9D";
+            $skin->skin_color = "#D37878";
+            $skin->save();
 
 
             // Assign teacher role to the user
