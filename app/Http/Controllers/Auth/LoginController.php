@@ -44,7 +44,7 @@ class LoginController extends Controller
             Auth::user()->tokens()->delete();
             return response()->json(['message' => 'Logged out']);
         } catch (\Exception $e) {
-            return response()->json(['message' => 'Error while logging out'], 500);
+            return response()->json(['message' => 'Error while logging out' . $e->getMessage () ], 500);
         }
     }
 }

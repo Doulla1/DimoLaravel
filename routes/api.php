@@ -71,8 +71,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/courses/subject/{subject_id}', [CourseController::class, 'getBySubject']);
 
     // Se déconnecter
-    Route::post('/logout', [LoginController::class, '
-    logout']);
+    Route::post('/logout', [LoginController::class, 'logout']);
 });
 
 // Routes accessibles aux students
