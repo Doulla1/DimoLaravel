@@ -4,7 +4,9 @@ use App\Http\Controllers\Auth\ForgotPasswordController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\DocumentController;
+use App\Http\Controllers\LobbyController;
 use App\Http\Controllers\OptionController;
+use App\Http\Controllers\ParticipantController;
 use App\Http\Controllers\ProgramController;
 use App\Http\Controllers\CourseController;
 use App\Http\Controllers\QuestionController;
@@ -59,6 +61,9 @@ Route::middleware('auth:sanctum')->group(function () {
 
     // Mettre à jour son skin
     Route::put('/skin', [Skin2Controller::class, 'update']);
+
+    // Récupère le nombre de participants à un cours
+    Route::get('/courses/{course_id}/participants', [CourseController::class, 'getParticipants']);
 });
 
 // Routes accessibles aux students
@@ -83,6 +88,12 @@ Route::middleware(["auth:sanctum", "checkrole:student"])->group(function () {
 
     // Consulter son emploi du temps (liste des cours)
     Route::get('/student-courses', [CourseController::class, 'getByConnectedStudent']);
+
+    // Rejoindre un cours en tant que participant
+    Route::post('/join-course', [CourseController::class, 'joinCourse']);
+
+    // Quitter un cours en tant que participant
+    Route::post('/leave-course', [CourseController::class, 'leaveCourse']);
 
 });
 
@@ -245,5 +256,22 @@ Route::middleware(["auth:sanctum", "checkrole:admin"])->group(function () {
     // Supprimer un programme
     Route::delete('/admin/programs/{id}', [ProgramController::class, 'destroy']);
 
+    // Récupérer tous les participants de la table participants
+    Route::get('/admin/participants', [ParticipantController::class, 'getAll']);
+
+    // Créer un nouveau participant en tant qu'admin
+    Route::post('/admin/participants', [ParticipantController::class, 'create']);
+
+    // Mettre à jour un participant en tant qu'admin
+    Route::put('/admin/participants/{id}', [ParticipantController::class, 'update']);
+
+    // Supprimer un participant en tant qu'admin
+    Route::delete('/admin/participants/{id}', [ParticipantController::class, 'delete']);
+
+    // Récupérer tous les lobbies
+    Route::get('/admin/lobbies', [LobbyController::class, 'getAll']);
+
+    // Mettre à jour un lobby
+    Route::put('/admin/lobbies/{id}', [LobbyController::class, 'update']);
 
 });
