@@ -20,6 +20,8 @@ return new class extends Migration
             $table->dateTime('start_date');
             $table->dateTime('end_date');
             $table->boolean ('is_active')->default(false);
+            $table->UnsignedBigInteger('lobby_id')->nullable();
+            $table->foreign('lobby_id')->references('id')->on('lobbies')->nullable();
             $table->timestamps();
         });
     }

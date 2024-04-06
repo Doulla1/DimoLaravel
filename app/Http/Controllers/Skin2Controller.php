@@ -31,6 +31,7 @@ class Skin2Controller extends Controller
      * Update the connected user's skin
      *
      * @param Request $request
+     * @response array{skin: Skin2}
      * @return JsonResponse
      */
     public function update(Request $request): JsonResponse

@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Models\Course;
+use App\Models\Lobby;
+use App\Models\Participant;
 use App\Models\Program;
 use Exception;
 use Illuminate\Http\JsonResponse;
@@ -190,6 +192,20 @@ class CourseController extends Controller
                     "message" => "There are already 5 active courses. Wait for a course to end before starting a new one"
                 ], 400);
             }
+            // Si le cours est actif dès la création
+            if($request->is_active == "true"){
+                // Vérifier quels sont les lobbies disponibles en listant tous les cours actifs et les lobbies dans lesquels ils se trouvent (si un cours est actif, il doit être dans un lobby)
+                $occupiedLobbies = Course::where('is_active', true)->get()->pluck('lobby_id')->toArray();
+                $freeLobbies = Lobby::whereNotIn('id', $occupiedLobbies)->get();
+                // S'il n'y a pas de lobby disponible
+                if (count($freeLobbies) == 0) {
+                    return response()->json([
+                        "message" => "No lobby available"
+                    ], 400);
+                }
+                // Affecter un lobby à ce cours
+                $course->lobby_id = $freeLobbies[0]->id;
+            }
 
             $course->is_active = $request->is_active == "true";
             $course->save();
@@ -265,6 +281,17 @@ class CourseController extends Controller
             if ($course &&
                 ($course->teacher_id == auth()->user()->id || auth()->user()->hasRole('teacher'))) {
                 $course->start_date = now();
+                // Vérifier quels sont les lobbies disponibles en listant tous les cours actifs et les lobbies dans lesquels ils se trouvent (si un cours est actif, il doit être dans un lobby)
+                $occupiedLobbies = Course::where('is_active', true)->get()->pluck('lobby_id')->toArray();
+                $freeLobbies = Lobby::whereNotIn('id', $occupiedLobbies)->get();
+                // S'il n'y a pas de lobby disponible
+                if (count($freeLobbies) == 0) {
+                    return response()->json([
+                        "message" => "No lobby available"
+                    ], 400);
+                }
+                // Affecter un lobby à ce cours
+                $course->lobby_id = $freeLobbies[0]->id;
                 $course->is_active = true;
                 $course->save();
                 return response()->json([
@@ -298,6 +325,10 @@ class CourseController extends Controller
                 $course->end_date = now();
                 $course->is_active = false;
                 $course->save();
+
+                // Retirer tous les participants du cours
+                $course->participants()->update(['is_currently_present' => false]);
+
                 return response()->json([
                     "course" => $course
                 ]);
@@ -310,6 +341,89 @@ class CourseController extends Controller
             return response()->json([
                 "message" => "An error occurred while ending course"
             ], 500);
+        }
+    }
+
+    /**
+     * Join a course as a student
+     *
+     * @param Request $request
+     * @return JsonResponse
+     * @response array{participant:Participant }
+     */
+    public function joinCourse(Request $request): JsonResponse
+    {
+        try {
+            $user = auth()->user();
+            $request->validate([
+                "course_id" => "required|integer",
+            ]);
+
+            // Vérifier si l'utilisateur est déjà inscrit au cours
+            $participant = Participant::where('user_id', $user->id)->where('course_id', $request->course_id)->first();
+            if ($participant) {
+                // Indiquer que l'utilisateur n'est plus présent
+                $participant->is_currently_present = true;
+                $participant->save();
+                return response()->json(['participant' => $participant], 200);
+            }
+
+            $participant = Participant::create([
+                "user_id" => $user->id,
+                "course_id" => $request->course_id,
+                'is_currently_present' => true
+            ]);
+
+            return response()->json(['participant' => $participant], 201);
+        } catch (\Exception $e) {
+            return response()->json(['message' => 'An error occurred while creating the participant', 'error' => $e->getMessage()], 500);
+        }
+    }
+
+    /**
+     * Leave a course as a student
+     *
+     * @param Request $request
+     * @response array{participant: Participant}
+     * @return JsonResponse
+     */
+    public function leaveCourse(Request $request): JsonResponse
+    {
+        try {
+            $user = auth()->user();
+            $request->validate([
+                "course_id" => "required|integer",
+            ]);
+
+            $participant = Participant::where('user_id', $user->id)->where('course_id', $request->course_id)->first();
+            // Indiquer que l'utilisateur n'est plus présent
+            $participant->is_currently_present = false;
+            $participant->save();
+
+            return response()->json(['participant' => $participant], 201);
+        } catch (\Exception $e) {
+            return response()->json(['message' => 'An error occurred while deleting the participant', 'error' => $e->getMessage()], 500);
+        }
+    }
+
+    /**
+     * Get participants of a course
+     *
+     * @param int $course_id
+     * @response array{activeParticipants: Participant[], countActiveParticipants: int, allParticipants: Participant[], countAllParticipants: int}
+     * @return JsonResponse
+     */
+    public function getParticipants(int $course_id): JsonResponse
+    {
+        try {
+            $activeParticipants = Participant::where('course_id', $course_id)->where('is_currently_present', true)->get();
+            $countActiveParticipants = Participant::where('course_id', $course_id)->where('is_currently_present', true)->count();
+            $allParticipants = Participant::where('course_id', $course_id)->get();
+            $countAllParticipants = Participant::where('course_id', $course_id)->count();
+
+            return response()->json(['activeParticipants'=> $activeParticipants, 'countActiveParticipants' => $countActiveParticipants, 'allParticipants' => $allParticipants, 'countAllParticipants' => $countAllParticipants], 200);
+        } catch (\Exception $e) {
+            return response()->json(['message' => 'An error occurred while fetching the participants', 'error' => $e->getMessage()], 500);
         }
     }
 
