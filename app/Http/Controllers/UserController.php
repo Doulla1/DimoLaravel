@@ -152,6 +152,7 @@ class UserController extends Controller
             $user->firstname = $request->firstname;
             $user->lastname = $request->lastname;
             $user->email = $request->email;
+            $user->save();
             // Rajouter les rôles de l'utilisateur
             $user->load('roles');
             return response()->json(["user"=>$user]);
