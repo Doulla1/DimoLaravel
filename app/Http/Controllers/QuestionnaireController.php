@@ -59,6 +59,9 @@ class QuestionnaireController extends Controller
                 return response()->json(['message' => "You are not allowed to access this document" . $e->getMessage()], 403);
             }
         }
+        elseif ($user->hasRole('teacher') || $user->hasRole('admin')){
+            $questionnaire = Questionnaire::findOrFail($id);
+        }
         elseif (!$user->hasRole('teacher') && !$user->hasRole('admin')){
             return response()->json(['message' => "You are not allowed to access this document", 403]);
         }
