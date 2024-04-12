@@ -36,7 +36,19 @@ return [
          * Description rendered on the home page of the API documentation (`/docs/api`).
          */
         'description' =>
-            "## Fonctionnalités de l'API DimoVR
+            "## Logique de l'API
+L'API DimoVR est une API RESTful qui permet de gérer les programmes d'études, les matières, les cours, les questionnaires, les documents, les notes et les skins des utilisateurs. Elle est sécurisée par Sanctum et permet de gérer les utilisateurs, les professeurs, les étudiants et les administrateurs.
+
+- Un programme est une classe (par exemple MSC à Epitech), ce programme est composé de plusieurs matières (par exemple, IA, Réseaux,VR...etc)
+- Dans chaque matière les profs peuvent créer un ou plusieurs cours, ajouter des documents et des questionnaires liés à la matière.
+- Lorsqu'un cours est créé pour une matière, le prof peut lui attribuer une date de début et de fin, les étudiants inscrits à ce programme pourront alors voir les cours prévus dans leur programmes.
+- Les étudiants peuvent consulter les emplois du temps, les documents et les questionnaires de leurs matières, remplir les questionnaires et consulter leurs notes.
+- Lorsque le prof lance un cours dans une matière, les étudiants inscrits au programme auquel fait partie cette matière peuvent le rejoindre et suivre le cours; ils peuvent également le quitter à tout moment.
+- Les questionnaires sont des questionnaires à choix multiples, les étudiants peuvent les remplir et les soumettre, ils seront notés automatiquement et la note sera enregistrée dans la base de données.
+
+
+
+## Fonctionnalités de l'API DimoVR
 
 - **Anonyme :**
   - Consultation des programmes disponibles.
