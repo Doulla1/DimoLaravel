@@ -45,7 +45,8 @@ L'API DimoVR est une API RESTful qui permet de gérer les programmes d'études, 
 - Les étudiants peuvent consulter les emplois du temps, les documents et les questionnaires de leurs matières, remplir les questionnaires et consulter leurs notes.
 - Lorsque le prof lance un cours dans une matière, les étudiants inscrits au programme auquel fait partie cette matière peuvent le rejoindre et suivre le cours; ils peuvent également le quitter à tout moment.
 - Les questionnaires sont des questionnaires à choix multiples, les étudiants peuvent les remplir et les soumettre, ils seront notés automatiquement et la note sera enregistrée dans la base de données.
-
+- Un questionnaire est composé de plusieurs questions, chaque question a un texte et plusieurs options/réponses possibles, plusieurs options peuvent être correctes.
+- Les profs peuvent rendre les questionnaires créés accessibles ou non aux étudiants (par défaut ils sont inaccessibles après leur création).
 
 
 ## Fonctionnalités de l'API DimoVR
