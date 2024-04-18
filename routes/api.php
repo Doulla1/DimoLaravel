@@ -84,7 +84,10 @@ Route::middleware(["auth:sanctum", "checkrole:student"])->group(function () {
     Route::get('/questionnaires/{questionnaireId}/results', [QuestionnaireController::class, 'getScoreOfQuestionnaire']);
 
     // Consulter les résultats des questionnaires passés
-    Route::get('/questionnaires/results', [QuestionnaireController::class, 'getScoreOfAllQuestionnaires']);
+    Route::get('/results', [QuestionnaireController::class, 'getScoreOfAllQuestionnaires']);
+
+    // Savoir si un questionnaire est traité
+    Route::get('/treated/{questionnaireId}', [QuestionnaireController::class, 'getTreatedQuestionnaire']);
 
     // Consulter son emploi du temps (liste des cours)
     Route::get('/student-courses', [CourseController::class, 'getByConnectedStudent']);

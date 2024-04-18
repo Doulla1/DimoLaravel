@@ -239,14 +239,29 @@ class QuestionnaireController extends Controller
             // Trouver le questionnaire
             $questionnaire = Questionnaire::findOrFail($request->id);
 
+            // Vérifier si le questionnaaire n'a pas déjà été traité
+            $statistic = Statistic::where('user_id', auth()->user()->id)
+                ->where('questionnaire_id', $questionnaire->id)
+                ->first();
+            if ($statistic) {
+                return response()->json(['message' => 'Questionnaire already treated'], 400);
+            }
+
             $score = 0;
+            // Pour chaque question répondue
             foreach ($request->questions as $questionAnswered) {
-                // Enregistrer la réponse
-                $response = new Response();
-                $response->user_id = auth()->user()->id;
-                $response->question_id = $questionAnswered['id'];
-                $response->option_id = $questionAnswered['options'][0]['id'];
-                $response->save();
+                // Pour chaque option
+                foreach ($questionAnswered['options'] as $optionAnswered) {
+                    // Si l'option est sélectionnée
+                    if ($optionAnswered['selected'] == "true") {
+                        // Enregistrer la réponse
+                        $response = new Response();
+                        $response->user_id = auth()->user()->id;
+                        $response->question_id = $questionAnswered['id'];
+                        $response->option_id = $optionAnswered['id'];
+                        $response->save();
+                    }
+                }
 
                 // Corriger le questionnaire
                 $question = $questionnaire->questions->where('id', $questionAnswered['id'])->first();
@@ -348,7 +363,7 @@ class QuestionnaireController extends Controller
     }
 
     /**
-     * Get the score of a student for all questionnaires.
+     * Get the score of a student for all questionnaires with the answers given.
      *
      * @response array{scores: array}
      * @return JsonResponse
@@ -363,11 +378,44 @@ class QuestionnaireController extends Controller
                     ->where('questionnaire_id', $questionnaire->id)
                     ->first();
                 if ($statistic) {
+                    $answers = Response::where('user_id', auth()->user()->id)
+                        ->whereHas('question', function ($query) use ($questionnaire) {
+                            $query->where('questionnaire_id', $questionnaire->id);
+                        })
+                        ->get();
                     $score = ($statistic->result / $statistic->total_correct_answers) * 100;
-                    $scores[$questionnaire->title] = $score;
+                    $scores[$questionnaire->title] = ["score"=>$score, "questionnaire"=>$questionnaire, "answers"=>$answers];
                 }
             }
             return response()->json(['scores' => $scores], 200);
+        } catch (\Exception $e) {
+            return response()->json(['message' => $e->getMessage()], 500);
+        }
+    }
+
+    /**
+     * Get a questionnaire already treated by a student with the answers given or null if questionnaire not treated.
+     *
+     * @param int $questionnaireId
+     * @return JsonResponse
+     */
+    public function getTreatedQuestionnaire(int $questionnaireId): JsonResponse
+    {
+        try {
+            $questionnaire = Questionnaire::findOrFail($questionnaireId);
+            $statistic = Statistic::where('user_id', auth()->user()->id)
+                ->where('questionnaire_id', $questionnaireId)
+                ->first();
+            if (!$statistic) {
+                return response()->json(['message' => 'No score found'], 404);
+            }
+            $answers = Response::where('user_id', auth()->user()->id)
+                ->whereHas('question', function ($query) use ($questionnaire) {
+                    $query->where('questionnaire_id', $questionnaire->id);
+                })
+                ->get();
+            $score = ($statistic->result / $statistic->total_correct_answers) * 100;
+            return response()->json(['questionnaire' => $questionnaire, 'answers' => $answers, "score" => $score], 200);
         } catch (\Exception $e) {
             return response()->json(['message' => $e->getMessage()], 500);
         }
