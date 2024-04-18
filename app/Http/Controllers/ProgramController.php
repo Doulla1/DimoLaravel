@@ -273,6 +273,33 @@ class ProgramController extends Controller
     }
 
     /**
+     * Check if the connected student is registered to a program
+     *
+     * @param int $programId
+     * @response array{isRegistered: bool}
+     * @return JsonResponse
+     */
+    public function isRegistered(int $programId): JsonResponse
+    {
+        try {
+            $student = Auth::user();
+            $program = Program::find($programId);
+            if ($program) {
+                $isRegistered = $program->students->contains($student->id);
+                return response()->json(["isRegistered"=>$isRegistered], 200);
+            } else {
+                return response()->json([
+                    "message" => "program not found"
+                ], 404);
+            }
+        } catch (Exception $e) {
+            return response()->json([
+                "message" => "An error occurred while checking registration"
+            ], 500);
+        }
+    }
+
+    /**
      * Update an existing program
      *
      * @param Request $request

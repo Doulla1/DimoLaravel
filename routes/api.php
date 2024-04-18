@@ -71,6 +71,9 @@ Route::middleware(["auth:sanctum", "checkrole:student"])->group(function () {
     // Récupérer les programmes auxquels le student connecté est inscrit
     Route::get('/student-programs', [ProgramController::class, 'getByConnectedStudent']);
 
+    // Vérifier si un student est inscrit à un programme
+    Route::get('/is-registered/{programId}', [ProgramController::class, 'isRegistered']);
+
     // S'inscrire à un programme
     Route::post('/programs/register', [ProgramController::class, 'registerStudent']);
 
