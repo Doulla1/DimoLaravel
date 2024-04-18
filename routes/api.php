@@ -105,6 +105,9 @@ Route::middleware(["auth:sanctum", "checkrole:student"])->group(function () {
 
 // Routes accessibles aux teachers
 Route::middleware(["auth:sanctum", "checkrole:teacher"])->group(function () {
+    // Inscrire un nouvel étudiant
+    Route::post('/register-student', [RegisterController::class, 'registerStudent']);
+
     // Récupérer tous les cours
     Route::get('/courses', [CourseController::class, 'getAll']);
 

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Mail\RegistrationConfirmation;
+use App\Mail\SendStudentCredentials;
 use App\Mail\SendTeacherCredentials;
 use App\Models\Skin2;
 use Illuminate\Http\JsonResponse;
@@ -126,6 +127,59 @@ class RegisterController extends Controller
             $user->assignRole ('teacher');
             try {
                 Mail::to ($user->email)->send (new SendTeacherCredentials($user->firstname, $user->lastname, $user->email, $password));
+            } catch (\Exception $e) {
+                // Log the error for future reference
+                Log::error('Failed to send registration confirmation email: ' . $e->getMessage());
+            }
+            // Rajouter les rôles de l'utilisateur
+            $user->load ('roles');
+            return response ()->json (['user' => $user]);
+        } catch (\Exception $e) {
+            return response ()->json (['message' => 'Registration failed', 'error' => $e->getMessage ()], 500);
+        }
+    }
+
+    /**
+     * Register a new student
+     *
+     * @param Request $request
+     * @return JsonResponse
+     */
+    public function registerStudent(Request $request): JsonResponse
+    {
+        try {
+            $request->validate ([
+                'firstname' => 'required|string',
+                'lastname' => 'required|string',
+                'email' => 'required|email|unique:users,email',
+            ]);
+
+            // Generate a random password
+            $password = substr(str_shuffle("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!'-_&;"), 0, 10);
+
+            // Create the user
+            $user = new User;
+            $user->firstname = $request->firstname;
+            $user->lastname = $request->lastname;
+            $user->email = $request->email;
+            $user->password = Hash::make ($password);
+            $user->save ();
+
+            // Create a default skin for the user
+            $skin = new Skin2;
+            $skin->user_id = $user->id;
+            $skin->hair_version = 0;
+            $skin->hair_color = "#5286FF";
+            $skin->upper_body_color = "#F96C9D";
+            $skin->lower_body_color = "#F96C9D";
+            $skin->skin_color = "#D37878";
+            $skin->save();
+
+
+            // Assign student role to the user
+            $user->assignRole ('student');
+            try {
+                Mail::to ($user->email)->send (new SendStudentCredentials($user->firstname, $user->lastname, $user->email, $password));
             } catch (\Exception $e) {
                 // Log the error for future reference
                 Log::error('Failed to send registration confirmation email: ' . $e->getMessage());

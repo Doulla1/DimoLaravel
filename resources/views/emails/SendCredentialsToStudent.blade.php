@@ -8,7 +8,8 @@
 <body>
 <div style="height:97vh;width:100%;display:flex;justify-content:center;align-items:center;flex-direction:column;">
     <p>Bonjour {{ $firstname }},</p>
-    <p>Félicitations ! Vous avez été ajouté en tant que professeur sur DimoVR. Voici vos informations de connexion :</p>
+    <p>Félicitations ! Vous venez officiellement d'intégrer l'institut DimoVR en tant quétudiant.</p>
+    <p> Voici vos informations de connexion :</p>
     <ul>
         <li><strong>Identifiant:</strong> {{ $email }}</li>
         <li><strong>Mot de passe:</strong> {{ $password }}</li>
