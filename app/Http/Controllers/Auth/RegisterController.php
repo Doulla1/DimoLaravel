@@ -50,11 +50,11 @@ class RegisterController extends Controller
                 $user->assignRole('student');
                 // Send email confirmation
 
-                /*try {
+                try {
                     Mail::to($user->email)->send(new RegistrationConfirmation($user));
                 } catch (\Exception $e) {
                     return response()->json(['message' => 'Registration failed', 'error' => $e->getMessage()], 500);
-                }*/
+                }
                 try {
                     Mail::to($user->email)->send(new RegistrationConfirmation($user));
                 } catch (\Exception $e) {
