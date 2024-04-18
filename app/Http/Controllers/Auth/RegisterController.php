@@ -98,14 +98,17 @@ class RegisterController extends Controller
                 'firstname' => 'required|string',
                 'lastname' => 'required|string',
                 'email' => 'required|email|unique:users,email',
-                'password' => 'required|min:8',
             ]);
 
+            // Generate a random password
+            $password = substr(str_shuffle("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!'-_&;"), 0, 10);
+
+            // Create the user
             $user = new User;
             $user->firstname = $request->firstname;
             $user->lastname = $request->lastname;
             $user->email = $request->email;
-            $user->password = Hash::make ($request->password);
+            $user->password = Hash::make ($password);
             $user->save ();
 
             // Create a default skin for the user
@@ -121,14 +124,12 @@ class RegisterController extends Controller
 
             // Assign teacher role to the user
             $user->assignRole ('teacher');
-            /*
             try {
-                Mail::to ($user->email)->send (new SendTeacherCredentials($user->firstname, $user->lastname, $user->email, $request->password));
+                Mail::to ($user->email)->send (new SendTeacherCredentials($user->firstname, $user->lastname, $user->email, $password));
             } catch (\Exception $e) {
                 // Log the error for future reference
                 Log::error('Failed to send registration confirmation email: ' . $e->getMessage());
             }
-            */
             // Rajouter les rôles de l'utilisateur
             $user->load ('roles');
             return response ()->json (['user' => $user]);
