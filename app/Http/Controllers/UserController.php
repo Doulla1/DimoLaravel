@@ -41,7 +41,7 @@ class UserController extends Controller
         try{
             $user = Auth::user();
             $role = $user->getRoleNames();
-            return response()->json(["role"=>$role]);
+            return response()->json($role[0]);
         } catch (Exception $e) {
             return response()->json($e->getMessage(), 500);
         }
