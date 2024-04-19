@@ -68,7 +68,7 @@ class CourseController extends Controller
             // Si l'utilisateur est un professeur
             if($user->hasRole('teacher')){
                 $course = Course::where('teacher_id', $user->id)
-                    ->where('start_date', '>=', now())
+                    ->where('end_date', '>=', now("Europe/Paris"))
                     ->orderBy('start_date', 'asc')
                     ->first();
                 return response()->json(["course"=>$course], 200);
@@ -78,7 +78,7 @@ class CourseController extends Controller
                 $studentId = $user->id;
                 $course = Course::whereHas('subject.program.students', function ($query) use ($studentId) {
                     $query->where('students.user_id', $studentId);
-                })->where('start_date', '>=', now())
+                })->where('end_date', '>=', now("Europe/Paris"))
                     ->orderBy('start_date', 'asc')
                     ->first();
                 return response()->json(["course"=>$course], 200);
