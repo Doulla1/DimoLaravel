@@ -38,6 +38,9 @@ Route::get('/subjects/{id}', [SubjectController::class, 'getById']);
 
 // Routes accessibles à tout ceux qui sont connectés
 Route::middleware('auth:sanctum')->group(function () {
+
+    // Récupérer le rôle de l'utilisateur connecté
+    Route::get('/my-role', [UserController::class, 'getMyRole']);
     // Récupérer les informations de l'utilisateur connecté
     Route::get('/fetchUser',[UserController::class, 'getConnectedUser']);
 

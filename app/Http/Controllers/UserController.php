@@ -31,6 +31,23 @@ class UserController extends Controller
     }
 
     /**
+     * Get role of current user
+     *
+     *
+     * @return JsonResponse
+     */
+    public function getMyRole()
+    {
+        try{
+            $user = Auth::user();
+            $role = $user->getRoleNames();
+            return response()->json(["role"=>$role]);
+        } catch (Exception $e) {
+            return response()->json($e->getMessage(), 500);
+        }
+    }
+
+    /**
      * Get user by ID
      *
      * @param int $id
