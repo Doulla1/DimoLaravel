@@ -319,7 +319,7 @@ class CourseController extends Controller
             $course = Course::find($course_id);
             if ($course &&
                 ($course->teacher_id == auth()->user()->id || auth()->user()->hasRole('teacher'))) {
-                $course->start_date = now();
+                $course->start_date = now("Europe/Paris");
                 // Vérifier quels sont les lobbies disponibles en listant tous les cours actifs et les lobbies dans lesquels ils se trouvent (si un cours est actif, il doit être dans un lobby)
                 $occupiedLobbies = Course::where('is_active', true)->get()->pluck('lobby_id')->toArray();
                 $freeLobbies = Lobby::whereNotIn('id', $occupiedLobbies)->get();
