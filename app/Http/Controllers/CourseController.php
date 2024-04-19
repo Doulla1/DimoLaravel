@@ -361,7 +361,7 @@ class CourseController extends Controller
             $course = Course::find($course_id);
             if ($course &&
                 ($course->teacher_id == auth()->user()->id || auth()->user()->hasRole('teacher'))) {
-                $course->end_date = now();
+                $course->end_date = now("Europe/Paris");
                 $course->is_active = false;
                 $course->save();
 
