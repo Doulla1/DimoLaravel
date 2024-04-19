@@ -64,6 +64,9 @@ Route::middleware('auth:sanctum')->group(function () {
 
     // Récupère le nombre de participants à un cours
     Route::get('/courses/{course_id}/participants', [CourseController::class, 'getParticipants']);
+
+    // Récupérer le cours en cours ou le prochain cours
+    Route::get('/next-course', [CourseController::class, 'getNextCourse']);
 });
 
 // Routes accessibles aux students

@@ -57,6 +57,45 @@ class CourseController extends Controller
     }
 
     /**
+     * Get the current or next course of connected user
+     *
+     * @response array{course: Course}
+     * @return JsonResponse
+     */
+    public function getNextCourse(){
+        try {
+            $user = auth()->user();
+            // Si l'utilisateur est un professeur
+            if($user->hasRole('teacher')){
+                $course = Course::where('teacher_id', $user->id)
+                    ->where('start_date', '>=', now())
+                    ->orderBy('start_date', 'asc')
+                    ->first();
+                return response()->json(["course"=>$course], 200);
+            }
+            // Si l'utilisateur est un étudiant inscrit au programme dont fait partie la matière du cours
+            elseif($user->hasRole('student')){
+                $studentId = $user->id;
+                $course = Course::whereHas('subject.program.students', function ($query) use ($studentId) {
+                    $query->where('students.user_id', $studentId);
+                })->where('start_date', '>=', now())
+                    ->orderBy('start_date', 'asc')
+                    ->first();
+                return response()->json(["course"=>$course], 200);
+            }
+            else{
+                return response()->json([
+                    "message" => "You are not a teacher or a student"
+                ], 404);
+            }
+        } catch (Exception $e) {
+            return response()->json([
+                "message" => "An error occurred while getting course"
+            ], 500);
+        }
+    }
+
+    /**
      * Get courses by teacher id
      *
      * @param int $teacherId
