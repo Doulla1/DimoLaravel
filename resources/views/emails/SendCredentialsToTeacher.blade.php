@@ -6,7 +6,7 @@
     <link rel="icon" href="{{ asset('storage/images/DimoVR_logo.png') }}" type="image/png">
 </head>
 <body>
-<div style="height:97vh;width:100%;display:flex;justify-content:center;align-items:center;flex-direction:column;">
+<div style="">
     <p>Bonjour {{ $firstname }},</p>
     <p>Félicitations ! Vous avez été ajouté en tant que professeur sur DimoVR. Voici vos informations de connexion :</p>
     <ul>
