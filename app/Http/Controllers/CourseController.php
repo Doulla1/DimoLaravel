@@ -251,7 +251,7 @@ class CourseController extends Controller
 
             return response()->json([
                 "courses" => $course
-            ]);
+            ], 200);
         } catch (Exception $e) {
             return response()->json([
                 "message" => "An error occurred while creating course" . $e->getMessage()
