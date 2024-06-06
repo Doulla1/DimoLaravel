@@ -115,7 +115,7 @@ class UserController extends Controller
         try{
             $user = User::find($id);
             $user->delete();
-            return response()->json('User deleted');
+            return response()->json(["message" =>'User deleted']);
         } catch (Exception $e) {
             return response ()->json ($e->getMessage (), 500);
         }
