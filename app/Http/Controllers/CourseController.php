@@ -9,6 +9,7 @@ use App\Models\Program;
 use Exception;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class CourseController extends Controller
 {
@@ -144,9 +145,20 @@ class CourseController extends Controller
         try {
             $studentId = auth()->user()->id;
             // Trouver tous les cours qui font partie des matières des programmes auxquels l'étudiant est inscrit
-            $courses = Course::whereHas('subject.program.students', function ($query) use ($studentId) {
+            /*$courses = Course::whereHas('subject.program.students', function ($query) use ($studentId) {
                 $query->where('students.id', $studentId);
-            })->get();
+            })->get();*/
+
+            $courses = DB::table('courses')
+                ->join('subjects', 'courses.subject_id', '=', 'subjects.id')
+                ->join('programs', 'subjects.program_id', '=', 'programs.id')
+                ->join('students', 'programs.id', '=', 'students.program_id')
+                ->join('users', 'students.user_id', '=', 'users.id')
+                ->where('users.id', $studentId)
+                ->select('courses.*')
+                ->distinct()
+                ->get();
+
             return response()->json(["courses"=>$courses], 200);
         } catch (Exception $e) {
             return response()->json([

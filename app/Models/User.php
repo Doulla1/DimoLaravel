@@ -65,6 +65,11 @@ class User extends Authenticatable
         return $this->belongsToMany(Program::class,"students");
     }
 
+    public function programs(): BelongsToMany
+    {
+        return $this->belongsToMany(Program::class, 'program_student', 'student_id', 'program_id');
+    }
+
     public function toArray(): array
     {
         return [
