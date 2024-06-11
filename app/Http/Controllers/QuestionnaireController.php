@@ -286,7 +286,7 @@ class QuestionnaireController extends Controller
             $statistic = new Statistic();
             $statistic->user_id = auth()->user()->id;
             $statistic->questionnaire_id = $questionnaire->id;
-            $statistic->result = $score;
+            $statistic->result = max($score, 0);
             $statistic->total_correct_answers = $totalCorrectAnswers;
             $statistic->save();
 
